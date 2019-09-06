@@ -2,12 +2,13 @@
     package="surveyzulu.project_z">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
 
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Survey Zulu"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

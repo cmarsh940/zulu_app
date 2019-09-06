@@ -19,7 +19,7 @@ dependencies:
   charts_flutter: ^0.7.0
   flutter_form_builder: ^3.4.1
   google_sign_in: ^4.0.6
-  flutter_facebook_login: ^2.0.1
+#  flutter_facebook_login: ^2.0.1
   cupertino_icons: ^0.1.2
 
 
