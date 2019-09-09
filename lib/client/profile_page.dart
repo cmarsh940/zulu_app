@@ -97,12 +97,12 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             Center(child: Divider()),
-            ListTile(
-              title: Text('Subscription'),
-              subtitle: client?.subscription== null ? null : Text(
-                client?.subscription.toString() ?? "",
-              ),
-            ),
+            // ListTile(
+            //   title: Text('Subscription'),
+            //   subtitle: client?.subscription== null ? null : Text(
+            //     client?.subscription.toString() ?? "",
+            //   ),
+            // ),
             ListTile(
               title: Text('Total Surveys'),
               subtitle: client?.surveys?.length == null ? null : Text(

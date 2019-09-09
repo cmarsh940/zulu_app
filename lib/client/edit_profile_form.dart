@@ -332,7 +332,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
           return Scaffold(
             appBar: AppBar(
               title: Text(
-                'Edit Survey',
+                'Edit Profile',
               ),
             ),
             body: Padding(
@@ -400,9 +400,9 @@ class _EditProfileFormState extends State<EditProfileForm> {
                             attribute: "state",
                             decoration: InputDecoration(labelText: "State"),
                             initialValue: client?.address?.state,
-                            validators: [
-                              FormBuilderValidators.required(),
-                            ],
+                            // validators: [
+                            //   FormBuilderValidators.required(),
+                            // ],
                             hint: Text('Select State'),
                             items: states.map((Map q) => DropdownMenuItem(
                               value: q['abbreviation'],
@@ -412,8 +412,8 @@ class _EditProfileFormState extends State<EditProfileForm> {
                           ),
                           FormBuilderTextField(
                             attribute: "postalCode",
-                            decoration: InputDecoration(labelText: "City"),
-                            initialValue: client?.address?.postalCode.toString(),
+                            decoration: InputDecoration(labelText: "Postal Code"),
+                            initialValue: (client?.address?.postalCode != null) ? client?.address?.postalCode.toString() : '',
                             onChanged: (value) => client?.address?.postalCode = value.toInt(),
                           ),
                           

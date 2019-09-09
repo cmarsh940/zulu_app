@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
  import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:project_z/auth/authentication.dart';
@@ -13,7 +13,7 @@ import 'package:project_z/utils/popUp.dart';
 import '../login.dart';
 import 'login_button.dart';
 
-//FacebookLogin _facebookLogin = FacebookLogin();
+FacebookLogin _facebookLogin = FacebookLogin();
 
  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
 class LoginForm extends StatefulWidget {
@@ -161,7 +161,7 @@ class _LoginFormState extends State<LoginForm> {
                                 ),
                                 iconSize: 60,
                                 onPressed: () {
-//                                  _handleFacebookSignIn();
+                                 _handleFacebookSignIn();
                                 },
                               )
                             ],
@@ -236,50 +236,51 @@ class _LoginFormState extends State<LoginForm> {
      }
    }
 
-//  Future<void> _handleFacebookSignIn() async {
-//    String email;
-//    String id;
-//    final results = await _facebookLogin.logInWithReadPermissions(['email']);
-//    switch (results.status) {
-//      case FacebookLoginStatus.loggedIn:
-//        final token = results.accessToken.token;
-//        final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
-//        Map profile = json.decode(graphResponse.body);
-//        for (var i = 0; i < profile.length; i++) {
-//          var a = profile.entries.elementAt(i);
-//          print(a);
-//          if (a.key == 'email') {
-//            email = a.value;
-//          }
-//          else if (a.key == 'id') {
-//            id = a.value.toString();
-//          }
-//        }
-//        var password = 'Facebook' + id;
-//        _loginBloc.dispatch(
-//          LoginButtonPressed(
-//            email: email,
-//            password: password,
-//          ),
-//        );
-//        break;
-//      case FacebookLoginStatus.cancelledByUser :
-//        var title = 'Facebook Signin Error';
-//        var message = 'There was a problem signing in with Facebook.';
-//        showAlertPopup(context, title, message);
-//        break;
-//
-//      case FacebookLoginStatus.error :
-//        print('FACEBOOK LOGIN ERROR');
-//        var title = 'Facebook Signin Error';
-//        var message = 'There was a problem signing in with Facebook.';
-//        showAlertPopup(context, title, message);
-//        setState(() {
-//          rebuild += 1;
-//        });
-//
-//        break;
-//    }
-//
-//  }
+  Future<void> _handleFacebookSignIn() async {
+    String email;
+    String id;
+    final results = await _facebookLogin.logInWithReadPermissions(['email']);
+    switch (results.status) {
+      case FacebookLoginStatus.loggedIn:
+        final token = results.accessToken.token;
+        final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
+        Map profile = json.decode(graphResponse.body);
+        for (var i = 0; i < profile.length; i++) {
+          var a = profile.entries.elementAt(i);
+          print(a);
+          if (a.key == 'email') {
+            email = a.value;
+          }
+          else if (a.key == 'id') {
+            id = a.value.toString();
+          }
+        }
+        var password = 'Facebook' + id;
+        _loginBloc.dispatch(
+          LoginButtonPressed(
+            email: email,
+            password: password,
+          ),
+        );
+        break;
+
+      case FacebookLoginStatus.cancelledByUser :
+        var title = 'Facebook Signin Error';
+        var message = 'There was a problem signing in with Facebook.';
+        showAlertPopup(context, title, message);
+        break;
+
+      case FacebookLoginStatus.error :
+        print('FACEBOOK LOGIN ERROR');
+        var title = 'Facebook Signin Error';
+        var message = 'There was a problem signing in with Facebook.';
+        showAlertPopup(context, title, message);
+        setState(() {
+          rebuild += 1;
+        });
+
+        break;
+    }
+
+  }
 }

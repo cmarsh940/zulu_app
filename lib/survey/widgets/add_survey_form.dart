@@ -421,48 +421,48 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
                         ]
                       )
                     ),
-                    FormBuilderSwitch(
+                    (_subscription != 'FREE') ? FormBuilderSwitch(
                       label: Text('Private Survey'),
                       attribute: "private",
                       readOnly: (_subscription == 'FREE'),
                       initialValue: false,
                       onChanged: (value) => survey?.private = value,
-                    ),
-                    Center(
-                      child: (_subscription == 'FREE') 
-                      ? Row(
-                        children: [
-                          Icon(
-                            Icons.info,
-                            color: Colors.red,
-                            size: 20.0,
-                          ),
-                          Text('Upgrade to use this future', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600))
-                        ]
-                      ) 
-                      : SizedBox(),
-                    ),
+                    ) : SizedBox(),
+                    // Center(
+                    //   child: (_subscription == 'FREE') 
+                    //   ? Row(
+                    //     children: [
+                    //       Icon(
+                    //         Icons.info,
+                    //         color: Colors.red,
+                    //         size: 20.0,
+                    //       ),
+                    //       Text('Upgrade to use this future', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600))
+                    //     ]
+                    //   ) 
+                    //   : SizedBox(),
+                    // ),
                     FormBuilderSwitch(
                       label: Text('Public Survey'),
                       attribute: "public",
-                      readOnly: (_subscription == 'FREE'),
+                      // readOnly: (_subscription == 'FREE'),
                       initialValue: false,
                       onChanged: (value) => survey?.public = value,
                     ),
-                    Center(
-                      child: (_subscription == 'FREE') 
-                      ? Row(
-                        children: [
-                          Icon(
-                            Icons.info,
-                            color: Colors.red,
-                            size: 20.0,
-                          ),
-                          Text('Upgrade to use this future', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600))
-                        ]
-                      ) 
-                      : SizedBox(),
-                    ),
+                    // Center(
+                    //   child: (_subscription == 'FREE') 
+                    //   ? Row(
+                    //     children: [
+                    //       Icon(
+                    //         Icons.info,
+                    //         color: Colors.red,
+                    //         size: 20.0,
+                    //       ),
+                    //       Text('Upgrade to use this future', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600))
+                    //     ]
+                    //   ) 
+                    //   : SizedBox(),
+                    // ),
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Row(
