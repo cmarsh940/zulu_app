@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:native_widgets/native_widgets.dart';
 import 'package:project_z/auth/authentication.dart';
+import 'package:project_z/client/widgets/subscriptions_dialog.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/models/client.dart';
 
@@ -107,6 +108,18 @@ class ProfilePage extends StatelessWidget {
               title: Text('Total Surveys'),
               subtitle: client?.surveys?.length == null ? null : Text(
                 client?.surveys?.length.toString() ?? 0,
+              ),
+            ),
+            MaterialButton(
+              color: Theme.of(context).accentColor,
+              child: Text(
+                "Subscriptions",
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) {
+                  return SubscriptionDialog();
+                }),
               ),
             ),
             MaterialButton(
