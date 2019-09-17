@@ -2,15 +2,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:project_z/auth/authentication.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'consumable_store.dart';
 
 const bool kAutoConsume = true;
 
-const String _kConsumableId = '01';
+const String _kConsumableId = '06';
 const List<String> _kProductIds = <String>[
   '01',
   '02',
@@ -19,8 +18,20 @@ const List<String> _kProductIds = <String>[
   '05',
   '06',
 ];
+const List<Map<String,String>> _kProductNames = [
+  {'id':'01', 'name': 'basic'},
+  {'id':'02', 'name': 'pro'},
+  {'id':'03', 'name': 'elite'},
+  {'id':'04', 'name': 'basic annually'},
+  {'id':'05', 'name': 'pro annually'},
+  {'id':'06', 'name': 'elite annually'},
+];
 
 class SubscriptionDialog extends StatefulWidget {
+  final String id;
+
+  const SubscriptionDialog({Key key, this.id}) : super(key: key);
+
   @override
   _SubscriptionDialogState createState() => _SubscriptionDialogState();
 }
@@ -36,20 +47,52 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   bool _purchasePending = false;
   bool _loading = true;
   String _queryProductError;
+  String get id => widget.id;
+  dynamic subscription;
 
   @override
   void initState() {
+    getSubscription();
+
     Stream purchaseUpdated =
         InAppPurchaseConnection.instance.purchaseUpdatedStream;
     _subscription = purchaseUpdated.listen((purchaseDetailsList) {
       _listenToPurchaseUpdated(purchaseDetailsList);
     }, onDone: () {
+      print('_subscription is done, canceling now');
       _subscription.cancel();
     }, onError: (error) {
       print('ERROR: $error');
     });
     initStoreInfo();
     super.initState();
+  }
+
+  getSubscription() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    subscription = pref.getString("_subscription").toLowerCase() ?? '';
+    print('subscription is: $subscription');
+  }
+  updateSubscription(String id) async {
+    print('update id is: $id');
+    String newSubscription;
+
+
+    _kProductNames.forEach((f) => {
+      
+      if (id == f['id']) {
+        newSubscription = f['name']
+      }
+    });
+    print('new subscription is: $newSubscription');
+    if (newSubscription != null) {
+      SharedPreferences.getInstance().then((prefs) {  
+        prefs.setString("_subscription", newSubscription);
+      });
+      print('subscription is: $subscription');
+    } else {
+      print('subscription was null');
+    }
   }
 
   Future<void> initStoreInfo() async {
@@ -67,8 +110,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       return;
     }
 
-    ProductDetailsResponse productDetailResponse =
-        await _connection.queryProductDetails(_kProductIds.toSet());
+    ProductDetailsResponse productDetailResponse = await _connection.queryProductDetails(_kProductIds.toSet());
     if (productDetailResponse.error != null) {
       setState(() {
         _queryProductError = productDetailResponse.error.message;
@@ -135,7 +177,6 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
           children: [
             _buildConnectionCheckTile(),
             _buildProductList(),
-            // _buildConsumableBox(),
           ],
         ),
       );
@@ -161,20 +202,20 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
     }
 
     return Scaffold(
-        appBar: AppBar(
+      appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           tooltip: 'Back',
           onPressed: () => Navigator.of(context).pop()
-          ),
+        ),
         title: Text('Manange Subscription'),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0.0,
       ),
-        body: Stack(
-          children: stack,
-        ),
+      body: Stack(
+        children: stack,
+      ),
     );
   }
 
@@ -183,10 +224,8 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       return Card(child: ListTile(title: const Text('Trying to connect...')));
     }
     final Widget storeHeader = ListTile(
-      leading: Icon(_isAvailable ? Icons.check : Icons.block,
-          color: _isAvailable ? Colors.green : ThemeData.light().errorColor),
-      title: Text(
-          'The store is ' + (_isAvailable ? 'available' : 'unavailable') + '.'),
+      leading: Icon(_isAvailable ? Icons.check : Icons.block, color: _isAvailable ? Colors.green : ThemeData.light().errorColor),
+      title: Text('The store is ' + (_isAvailable ? 'available' : 'unavailable') + '.'),
     );
     final List<Widget> children = <Widget>[storeHeader];
 
@@ -194,10 +233,8 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       children.addAll([
         Divider(),
         ListTile(
-          title: Text('Not connected',
-              style: TextStyle(color: ThemeData.light().errorColor)),
-          subtitle: const Text(
-              'Unable to connect to the payments processor. Please try again later'),
+          title: Text('Not connected', style: TextStyle(color: ThemeData.light().errorColor)),
+          subtitle: const Text('Unable to connect to the payments processor. Please try again later'),
         ),
       ]);
     }
@@ -207,116 +244,81 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   Card _buildProductList() {
     if (_loading) {
       return Card(
-          child: (ListTile(
-              leading: CircularProgressIndicator(),
-              title: Text('Fetching subscriptions...'))));
+        child: (ListTile(
+          leading: CircularProgressIndicator(),
+          title: Text('Fetching subscriptions...')
+        ))
+      );
     }
     if (!_isAvailable) {
       return Card();
     }
-    final ListTile productHeader = ListTile(
-        title: Text('Subscriptions',
-            style: Theme.of(context).textTheme.headline));
+    ListTile productHeader = ListTile(title: Text('Subscriptions', style: Theme.of(context).textTheme.headline));
     List<ListTile> productList = <ListTile>[];
     if (_notFoundIds.isNotEmpty) {
       productList.add(ListTile(
-          title: Text('[${_notFoundIds.join(", ")}] not found',
-              style: TextStyle(color: ThemeData.light().errorColor)),
-          subtitle: Text(
-              'There was a Error ')));
+        title: Text('[${_notFoundIds.join(", ")}] not found', style: TextStyle(color: ThemeData.light().errorColor)),
+        subtitle: Text('There was a Error ')
+      ));
     }
 
-    // This loading previous purchases code is just a demo. Please do not use this as it is.
-    // In your app you should always verify the purchase data using the `verificationData` inside the [PurchaseDetails] object before trusting it.
-    // We recommend that you use your own server to verity the purchase data.
-    Map<String, PurchaseDetails> purchases =
-        Map.fromEntries(_purchases.map((PurchaseDetails purchase) {
+
+    // LIST OF SUBSCRIPTIONS
+    Map<String, PurchaseDetails> purchases = Map.fromEntries(_purchases.map((PurchaseDetails purchase) {
       if (Platform.isIOS) {
         InAppPurchaseConnection.instance.completePurchase(purchase);
       }
       return MapEntry<String, PurchaseDetails>(purchase.productID, purchase);
     }));
-    print('__ PURCHASES : $purchases');
-    productList.addAll(_products.map(
-      (ProductDetails productDetails) {
-        print('__ PRODUCT DETAILS: $productDetails');
-        PurchaseDetails previousPurchase = purchases[productDetails.id];
-        return ListTile(
-            title: Text(
-              productDetails.title,
-            ),
-            subtitle: Text(
-              productDetails.description,
-            ),
-            trailing: previousPurchase != null
-                ? Icon(Icons.check)
-                : FlatButton(
-                    child: Text(productDetails.price),
-                    color: Colors.green[800],
-                    textColor: Colors.white,
-                    onPressed: () {
-                      PurchaseParam purchaseParam = PurchaseParam(
-                          productDetails: productDetails,
-                          applicationUserName: null,
-                          sandboxTesting: true);
-                      if (productDetails.id == _kConsumableId) {
-                        _connection.buyConsumable(
-                            purchaseParam: purchaseParam,
-                            autoConsume: kAutoConsume || Platform.isIOS);
-                      } else {
-                        _connection.buyNonConsumable(
-                            purchaseParam: purchaseParam);
-                      }
-                    },
-                  ));
-      },
-    ));
+
+
+    productList.addAll(_products.map((ProductDetails productDetails) {
+      PurchaseDetails previousPurchase = purchases[productDetails.id];
+      return ListTile(
+        title: Text(productDetails.title),
+        subtitle: Text(productDetails.description),
+        trailing: previousPurchase != null
+          ? Icon(Icons.check)
+          : (subscription != productDetails.title.toLowerCase()) ? FlatButton(
+            child: Text(productDetails.price),
+            color: Colors.green[800],
+            textColor: Colors.white,
+            onPressed: () {
+              PurchaseParam purchaseParam = PurchaseParam(
+                  productDetails: productDetails,
+                  applicationUserName: id,
+                  sandboxTesting: true);
+              if (productDetails.id == _kConsumableId) {
+                _connection.buyConsumable(
+                    purchaseParam: purchaseParam,
+                    autoConsume: kAutoConsume || Platform.isIOS);
+              } else {
+                _connection.buyNonConsumable(purchaseParam: purchaseParam);
+              }
+            },
+          ) : FlatButton(
+            child: Text(productDetails.price),
+            color: Colors.grey,
+            textColor: Colors.white,
+            onPressed: () {
+              print('this is your current subscription');
+            },
+          ),
+      );
+    }));
 
     return Card(
-        child:
-            Column(children: <Widget>[productHeader, Divider()] + productList));
+      child: Column(
+        children: <Widget>[
+          productHeader, 
+          Divider()
+        ] + productList
+      )
+    );
   }
 
-  // Card _buildConsumableBox() {
-  //   if (_loading) {
-  //     return Card(
-  //         child: (ListTile(
-  //             leading: CircularProgressIndicator(),
-  //             title: Text('Fetching consumables...'))));
-  //   }
-  //   if (!_isAvailable || _notFoundIds.contains(_kConsumableId)) {
-  //     return Card();
-  //   }
-  //   final ListTile consumableHeader = ListTile(
-  //       title: Text('Purchased consumables',
-  //           style: Theme.of(context).textTheme.headline));
-  //   final List<Widget> tokens = _consumables.map((String id) {
-  //     return GridTile(
-  //       child: IconButton(
-  //         icon: Icon(
-  //           Icons.stars,
-  //           size: 42.0,
-  //           color: Colors.orange,
-  //         ),
-  //         splashColor: Colors.yellowAccent,
-  //         onPressed: () => consume(id),
-  //       ),
-  //     );
-  //   }).toList();
-  //   return Card(
-  //       child: Column(children: <Widget>[
-  //     consumableHeader,
-  //     Divider(),
-  //     GridView.count(
-  //       crossAxisCount: 5,
-  //       children: tokens,
-  //       shrinkWrap: true,
-  //       padding: EdgeInsets.all(16.0),
-  //     )
-  //   ]));
-  // }
-
   Future<void> consume(String id) async {
+    print('*** hit consume with id: $id');
     await ConsumableStore.consume(id);
     final List<String> consumables = await ConsumableStore.load();
     setState(() {
@@ -325,12 +327,14 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   }
 
   void showPendingUI() {
+    print('PENDING...');
     setState(() {
       _purchasePending = true;
     });
   }
 
   void deliverProduct(PurchaseDetails purchaseDetails) async {
+    print('PRODUCT ID PURCHASED: ${purchaseDetails.productID.toString()}');
     // IMPORTANT!! Always verify a purchase purchase details before delivering the product.
     if (purchaseDetails.productID == _kConsumableId) {
       await ConsumableStore.save(purchaseDetails.purchaseID);
@@ -348,6 +352,9 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   }
 
   void handleError(IAPError error) {
+    print('*** ERROR CODE: ${error.code}');
+    print('*** ERROR DETAILS: ${error.details}');
+    print('*** ERROR MESSAGE: ${error.message}');
     setState(() {
       _purchasePending = false;
     });
@@ -356,6 +363,10 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) {
     // IMPORTANT!! Always verify a purchase before delivering the product.
     // For the purpose of an example, we directly return true.
+    print('Verify Product ID ${purchaseDetails.productID}');
+    print('Verify Purchase ID ${purchaseDetails.purchaseID}');
+    print('Verify Purchase DATA ${purchaseDetails.verificationData}');
+
     return Future<bool>.value(true);
   }
 
@@ -367,16 +378,21 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       ListTile(title: Card(child: innerTile));
 
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
-    print('*** initializing list');
+    print('*** Hit purchase update');
     purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
-      print('-- PURCHASE DETAILS: $purchaseDetails');
       if (purchaseDetails.status == PurchaseStatus.pending) {
+        print('*** Purchase Pending');
         showPendingUI();
       } else {
+        print('Purchase status : ${purchaseDetails.status}');
         if (purchaseDetails.status == PurchaseStatus.error) {
+          print("ERROR PURCHASING: ${purchaseDetails.error.source}");
           handleError(purchaseDetails.error);
         } else if (purchaseDetails.status == PurchaseStatus.purchased) {
+          print('*** Purchase Purchased ${purchaseDetails.productID}');
+          updateSubscription(purchaseDetails.productID);
           bool valid = await _verifyPurchase(purchaseDetails);
+          print("Verify Valid Purchase: $valid");
           if (valid) {
             deliverProduct(purchaseDetails);
           } else {
@@ -384,8 +400,10 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
           }
         }
         if (Platform.isIOS) {
+          print('*** Platform is IOS');
           InAppPurchaseConnection.instance.completePurchase(purchaseDetails);
         } else if (Platform.isAndroid) {
+          print('*** Platform is ANDROID');
           if (!kAutoConsume && purchaseDetails.productID == _kConsumableId) {
             InAppPurchaseConnection.instance.consumePurchase(purchaseDetails);
           }
