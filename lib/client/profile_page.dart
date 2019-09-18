@@ -118,7 +118,7 @@ class ProfilePage extends StatelessWidget {
               ),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) {
-                  return SubscriptionDialog(id: client.id);
+                  return SubscriptionDialog(id: client.id, clientRepository: clientRepository);
                 }),
               ),
             ),

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:project_z/data/repositories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'consumable_store.dart';
@@ -29,8 +30,11 @@ const List<Map<String,String>> _kProductNames = [
 
 class SubscriptionDialog extends StatefulWidget {
   final String id;
+  final ClientRepository _clientRepository;
 
-  const SubscriptionDialog({Key key, this.id}) : super(key: key);
+  const SubscriptionDialog({Key key, this.id, @required ClientRepository clientRepository,
+  }) : assert(clientRepository != null),
+        _clientRepository = clientRepository, super(key: key);
 
   @override
   _SubscriptionDialogState createState() => _SubscriptionDialogState();
@@ -48,6 +52,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   bool _loading = true;
   String _queryProductError;
   String get id => widget.id;
+  ClientRepository get _clientRepository => widget._clientRepository;
   dynamic subscription;
 
   @override
@@ -90,6 +95,8 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
         prefs.setString("_subscription", newSubscription);
       });
       print('subscription is: $subscription');
+      var data = await _clientRepository.updateSubscription(newSubscription);
+      print('dialog data is: $data');
     } else {
       print('subscription was null');
     }
@@ -349,6 +356,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
         _purchasePending = false;
       });
     }
+    Navigator.of(context).pop();
   }
 
   void handleError(IAPError error) {
@@ -361,11 +369,10 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   }
 
   Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) {
-    // IMPORTANT!! Always verify a purchase before delivering the product.
-    // For the purpose of an example, we directly return true.
+
     print('Verify Product ID ${purchaseDetails.productID}');
     print('Verify Purchase ID ${purchaseDetails.purchaseID}');
-    print('Verify Purchase DATA ${purchaseDetails.verificationData}');
+    print('Verify Purchase DATA SOURCE ${purchaseDetails.verificationData.source}');
 
     return Future<bool>.value(true);
   }

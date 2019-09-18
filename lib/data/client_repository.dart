@@ -152,4 +152,52 @@ class ClientRepository {
       }
     }
   }
+  Future updateSubscription(String data) async {
+    print('HIT UPDATE SUBSCRIPTION');
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String _token = pref.getString("client_token");
+    var id = getId();
+    print('client id is: $id');
+    if (id == null) {
+      return null;
+    } else {
+      var url = updateSubscriptionURL + '$id';
+      // var _body = json.encode(data.toJson());
+      final http.Response response = await http.put(
+        Uri.encodeFull(url), 
+        body: data, 
+        headers: {
+          'Content-Type': 'application/json',
+          HttpHeaders.authorizationHeader: "Bearer $_token",
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = response.body;
+        print('data returned is: $data');
+        return data;
+      } else {
+        print('Error did not return 200');
+        return null;
+      }
+    }
+  }
+}
+
+class Payment {
+  String id;
+  dynamic subscription;
+
+  Payment(this.id,this.subscription);
+
+  Payment.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    subscription = json['subscription'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['subscription'] = this.subscription;
+    return data;
+  }
 }
