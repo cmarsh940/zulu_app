@@ -78,14 +78,14 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
     subscription = pref.getString("_subscription").toLowerCase() ?? '';
     print('subscription is: $subscription');
   }
-  updateSubscription(String id) async {
+  updateSubscription(Payment data) async {
     print('update id is: $id');
     String newSubscription;
 
 
     _kProductNames.forEach((f) => {
       
-      if (id == f['id']) {
+      if (data.id == f['id']) {
         newSubscription = f['name']
       }
     });
@@ -94,9 +94,10 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       SharedPreferences.getInstance().then((prefs) {  
         prefs.setString("_subscription", newSubscription);
       });
+      
       print('subscription is: $subscription');
-      var data = await _clientRepository.updateSubscription(newSubscription);
-      print('dialog data is: $data');
+      var w = await _clientRepository.updateSubscription(data);
+      print('dialog data is: $w');
     } else {
       print('subscription was null');
     }
@@ -397,11 +398,16 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
           handleError(purchaseDetails.error);
         } else if (purchaseDetails.status == PurchaseStatus.purchased) {
           print('*** Purchase Purchased ${purchaseDetails.productID}');
-          updateSubscription(purchaseDetails.productID);
           bool valid = await _verifyPurchase(purchaseDetails);
           print("Verify Valid Purchase: $valid");
           if (valid) {
-            deliverProduct(purchaseDetails);
+            Payment temp = new Payment(purchaseDetails.productID, purchaseDetails.purchaseID);
+            bool done = await updateSubscription(temp);
+            if (done) {
+              deliverProduct(purchaseDetails);
+            } else {
+            _handleInvalidPurchase(purchaseDetails);
+          }
           } else {
             _handleInvalidPurchase(purchaseDetails);
           }

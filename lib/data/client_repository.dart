@@ -152,7 +152,7 @@ class ClientRepository {
       }
     }
   }
-  Future updateSubscription(String data) async {
+  Future updateSubscription(Payment data) async {
     print('HIT UPDATE SUBSCRIPTION');
     SharedPreferences pref = await SharedPreferences.getInstance();
     String _token = pref.getString("client_token");
@@ -162,19 +162,20 @@ class ClientRepository {
       return null;
     } else {
       var url = updateSubscriptionURL + '$id';
-      // var _body = json.encode(data.toJson());
+      var _body = json.encode(data.toJson());
       final http.Response response = await http.put(
         Uri.encodeFull(url), 
-        body: data, 
+        body: _body, 
         headers: {
           'Content-Type': 'application/json',
           HttpHeaders.authorizationHeader: "Bearer $_token",
         },
       );
+      print('statusCode: ${response.statusCode}');
       if (response.statusCode == 200) {
         var data = response.body;
         print('data returned is: $data');
-        return data;
+        return true;
       } else {
         print('Error did not return 200');
         return null;
