@@ -156,7 +156,7 @@ class ClientRepository {
     print('HIT UPDATE SUBSCRIPTION');
     SharedPreferences pref = await SharedPreferences.getInstance();
     String _token = pref.getString("client_token");
-    var id = getId();
+    var id = pref.getString("client_id");
     print('client id is: $id');
     if (id == null) {
       return null;

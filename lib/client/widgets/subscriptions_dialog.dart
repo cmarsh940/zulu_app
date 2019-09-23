@@ -98,6 +98,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       print('subscription is: $subscription');
       var w = await _clientRepository.updateSubscription(data);
       print('dialog data is: $w');
+      return w;
     } else {
       print('subscription was null');
     }
@@ -379,6 +380,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   }
 
   void _handleInvalidPurchase(PurchaseDetails purchaseDetails) {
+    print('NEED TO HANDLE INVALID PURCHASE');
     // handle invalid purchase here if  _verifyPurchase` failed.
   }
 
@@ -403,7 +405,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
           if (valid) {
             Payment temp = new Payment(purchaseDetails.productID, purchaseDetails.purchaseID);
             bool done = await updateSubscription(temp);
-            if (done) {
+            if (done != null && done) {
               deliverProduct(purchaseDetails);
             } else {
             _handleInvalidPurchase(purchaseDetails);
