@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:project_z/models/survey.dart';
+import 'package:project_z/survey/charts/boolean_pie_chart.dart';
+import 'package:project_z/survey/charts/donut_chart.dart';
+
 
 class QuestionWidget extends StatelessWidget {
   const QuestionWidget(this.question);
@@ -52,7 +55,7 @@ class QuestionWidget extends StatelessWidget {
         ],
       ),
     ));
-    } else if (question.questionType == 'boolean') {
+    } else if (question.questionType == 'boolean' || question.questionType == 'goodbad' || question.questionType == 'likeunlike' || question.questionType == 'yesno' || question.questionType == 'moreless') {
       List<OptionAnswers> temp = [];
       List test = question.answers;
       test.asMap();
@@ -74,7 +77,7 @@ class QuestionWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 5.0),
               child: Container(
-                height: 100,
+                height: 350,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -91,17 +94,66 @@ class QuestionWidget extends StatelessWidget {
                     Expanded(
                       child: new ListView.builder(
                         itemCount: question.answers.length,
+                        // ignore: missing_return
                         itemBuilder: (context, i) {
-                          return Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              (temp[i].name == 0) ? Text('true', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('false', textAlign: TextAlign.justify, textScaleFactor: 1.1,),
-                              ( temp[i].name == 0) ? Text('${temp[1].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('${temp[0].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,)
-                            ]
-                          );
+                          switch (question.questionType) {
+                            case 'boolean':
+                              return Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  (temp[i].name == 0) ? Text('true', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('false', textAlign: TextAlign.justify, textScaleFactor: 1.1,),
+                                  ( temp[i].name == 0) ? Text('${temp[1].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('${temp[0].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,)     
+                                ]
+                              );
+                              break;
+                            case 'goodbad':
+                              return Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  (temp[i].name == 0) ? Text('Good', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('Bad', textAlign: TextAlign.justify, textScaleFactor: 1.1,),
+                                  ( temp[i].name == 0) ? Text('${temp[1].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('${temp[0].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,)     
+                                ]
+                              );
+                              break;
+                            case 'yesno':
+                              return Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  (temp[i].name == 0) ? Text('Yes', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('No', textAlign: TextAlign.justify, textScaleFactor: 1.1,),
+                                  ( temp[i].name == 0) ? Text('${temp[1].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('${temp[0].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,)     
+                                ]
+                              );
+                              break;
+                            case 'likeunlike':
+                              return Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  (temp[i].name == 0) ? Text('Like', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('Unlike', textAlign: TextAlign.justify, textScaleFactor: 1.1,),
+                                  ( temp[i].name == 0) ? Text('${temp[1].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('${temp[0].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,)     
+                                ]
+                              );
+                              break;
+                            case 'moreless':
+                              return Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  (temp[i].name == 0) ? Text('More', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('Less', textAlign: TextAlign.justify, textScaleFactor: 1.1,),
+                                  ( temp[i].name == 0) ? Text('${temp[1].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,) : Text('${temp[0].count}', textAlign: TextAlign.justify, textScaleFactor: 1.1,)     
+                                ]
+                              );
+                              break;
+                          }
                         },
                       ),
+                    ),
+                    Container(
+                      height: 250,
+                      child: BooleanPieChart.withData(temp, question.questionType),
                     ),
                   ]
                 )
@@ -114,7 +166,7 @@ class QuestionWidget extends StatelessWidget {
 
 
     //MULTIPLE CHOICE
-    } else if (question.questionType == 'multiplechoice') {
+    } else if (question.questionType == 'multiplechoice' || question.questionType == 'dropDown') {
       List<OptionAnswers> temp = [];
       List test = question.answers;
       test.asMap();
@@ -159,7 +211,7 @@ class QuestionWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Text('${temp[index].name}'),
-                                (temp[index].count != null) ? Text('${temp[index].count / question.answers.length * 100}', textAlign: TextAlign.right,) : Text('No Answer')
+                                (temp[index].count != null) ? Text('${temp[index].count}', textAlign: TextAlign.right,) : Text('No Answer')
                               ],
                             ) : Text('No Answers', textAlign: TextAlign.left, textScaleFactor: 1.1,);
                           } 
@@ -168,6 +220,10 @@ class QuestionWidget extends StatelessWidget {
                     ]
                   )
               )
+            ),
+            Container(
+              height: 250,
+              child: DonutChart.withData(temp),
             ),
           ],
         ),

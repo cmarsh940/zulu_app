@@ -47,7 +47,7 @@ class _DetailsWidgetState extends State<DetailsWidget> {
         q.answers = tempAnswers;
       }
 
-      if (q.questionType == 'multiplechoice') {
+      if (q.questionType == 'multiplechoice' || q.questionType == 'dropDown') {
         print('********* QUESTION TYPE IS MULTIPLECHOICE *******');
         var tempAnswers = [];
         Map tempOptions;
@@ -68,7 +68,7 @@ class _DetailsWidgetState extends State<DetailsWidget> {
         q.answers = tempAnswers;
       }
 
-      if (q.questionType == 'boolean') {
+      if (q.questionType == 'boolean' || q.questionType == 'goodbad' || q.questionType == 'likeunlike' || q.questionType == 'yesno' || q.questionType == 'moreless') {
         print('********* QUESTION TYPE IS BOOLEAN *******');
         var tempAnswers = [{'name': 0, 'count': 0}, {'name': 1, 'count': 0}];
         for (var j = 0; j < q.answers.length; j++) {
