@@ -37,7 +37,6 @@ class _DetailsWidgetState extends State<DetailsWidget> {
         var tempAnswers = [{'number': 1, 'count': 0}, {'number': 2, 'count': 0}, {'number': 3, 'count': 0}, {'number': 4, 'count': 0}, {'number': 5, 'count': 0}];
         for (var j = 0; j < q.answers.length; j++) {
           var a = q.answers[j];
-          print('a: $a');
           tempAnswers.forEach((f) => {
             if(a == f['number']) {
               f['count'] += 1
@@ -55,10 +54,8 @@ class _DetailsWidgetState extends State<DetailsWidget> {
           tempOptions = {'name': v.optionName, 'count': 0},
           tempAnswers.add(tempOptions)
         });
-        print(' ### ### Start answers are: $tempAnswers');
         for (var j = 0; j < q.answers.length; j++) {
           var a = q.answers[j];
-          print('a: $a');
           tempAnswers.forEach((f) => {
             if(a == f['name']) {
               f['count'] += 1
@@ -73,7 +70,6 @@ class _DetailsWidgetState extends State<DetailsWidget> {
         var tempAnswers = [{'name': 0, 'count': 0}, {'name': 1, 'count': 0}];
         for (var j = 0; j < q.answers.length; j++) {
           var a = q.answers[j];
-          print('a: $a');
           tempAnswers.forEach((f) => {
             if(a == f['name']) {
               f['count'] += 1

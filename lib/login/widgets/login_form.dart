@@ -213,7 +213,6 @@ class _LoginFormState extends State<LoginForm> {
        final GoogleSignInAccount googleUser = await _googleSignIn.signIn().catchError((onError) {
          print("Error $onError");
        });
-       print('##### GOOGLE ###### $googleUser');
        if (googleUser == null) {
          var title = 'Google Signin Error';
          var message = 'There was a problem signing into goolgle.';
@@ -247,7 +246,6 @@ class _LoginFormState extends State<LoginForm> {
         Map profile = json.decode(graphResponse.body);
         for (var i = 0; i < profile.length; i++) {
           var a = profile.entries.elementAt(i);
-          print(a);
           if (a.key == 'email') {
             email = a.value;
           }

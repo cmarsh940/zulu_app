@@ -27,7 +27,6 @@ class _SurveyDetailsState extends State<SurveyDetails> {
   @override
   void initState() {
     id = widget.id;
-    print('initial id is: $id');
     _surveyDetailBloc = SurveyDetailBloc(surveyRepository: _surveyRepository)..dispatch(RetrieveSurveyById(id));
     super.initState();
   }
@@ -44,7 +43,6 @@ class _SurveyDetailsState extends State<SurveyDetails> {
       bloc: _surveyDetailBloc,
       listener: (context, state) {
         if (state is UpdateSuccessful) {
-          print('survey detail page update successful');
           Navigator.push(context,
             MaterialPageRoute(
               builder: (context) => SurveyList(surveyRepository: _surveyRepository),
@@ -59,13 +57,11 @@ class _SurveyDetailsState extends State<SurveyDetails> {
           if (state is SurveyByIdLoading) {
             return Center(child: CircularProgressIndicator());
           } else if (state is SurveyByIdLoadingError) {
-            print(" **** No Survey found ****");
             return Text(
               'Something went wrong!',
               style: TextStyle(color: Colors.red),
             );
           } else if (state is SurveyByIdLoadingSuccess) {
-            print('survey details loaded successfully');
             final survey = state.survey;
             return TabScreen(survey, _surveyRepository);
           } else if (state is UpdateSuccessful) {

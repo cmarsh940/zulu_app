@@ -19,7 +19,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   @override
   Stream<ProfileState> mapEventToState(ProfileEvent event) async* {
-    print('* BLOC Add/Update State Event is: $event');
     if (event is SubmissionProfileButtonPressed) {
       yield* _mapSubmissionPressedToState(
         client: event.client

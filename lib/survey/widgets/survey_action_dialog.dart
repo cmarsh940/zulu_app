@@ -20,7 +20,6 @@ surveyActionDialog(BuildContext context, String id, bool active) async {
             text: active ? Text('Open') : SizedBox(),
             isDestructive: false,
             onPressed: () {
-              print('clicked open survey');
               Navigator.pop(context, true);
             }
           ),
@@ -28,7 +27,6 @@ surveyActionDialog(BuildContext context, String id, bool active) async {
             text: active ? Text('Close', style: TextStyle(color: Colors.red)) : SizedBox(),
             isDestructive: false,
             onPressed: () {
-              print('clicked close survey');
               Navigator.of(context).pop('closed');
             }
           ),

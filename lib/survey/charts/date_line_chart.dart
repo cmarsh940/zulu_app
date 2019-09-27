@@ -10,7 +10,6 @@ class DateTimeComboLinePointChart extends StatelessWidget {
   DateTimeComboLinePointChart(this.seriesList, {this.animate});
 
   factory DateTimeComboLinePointChart.withData(Survey survey) {
-    print('HIT DATE TIME CHART');
     return new DateTimeComboLinePointChart(
       _createData(survey),
       animate: false,

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'consumable_store.dart';
 
@@ -12,20 +13,20 @@ const bool kAutoConsume = true;
 
 const String _kConsumableId = '06';
 const List<String> _kProductIds = <String>[
-  '01',
-  '02',
-  '03',
-  '04',
-  '05',
-  '06',
+  '001',
+  '002',
+  '003',
+  '004',
+  '005',
+  '006',
 ];
 const List<Map<String,String>> _kProductNames = [
-  {'id':'01', 'name': 'basic'},
-  {'id':'02', 'name': 'pro'},
-  {'id':'03', 'name': 'elite'},
-  {'id':'04', 'name': 'basic annually'},
-  {'id':'05', 'name': 'pro annually'},
-  {'id':'06', 'name': 'elite annually'},
+  {'id':'001', 'name': 'basic'},
+  {'id':'002', 'name': 'pro'},
+  {'id':'003', 'name': 'elite'},
+  {'id':'004', 'name': 'basic annually'},
+  {'id':'005', 'name': 'pro annually'},
+  {'id':'006', 'name': 'elite annually'},
 ];
 
 class SubscriptionDialog extends StatefulWidget {
@@ -76,10 +77,8 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   getSubscription() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     subscription = pref.getString("_subscription").toLowerCase() ?? '';
-    print('subscription is: $subscription');
   }
   updateSubscription(Payment data) async {
-    print('update id is: $id');
     String newSubscription;
 
 
@@ -89,18 +88,32 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
         newSubscription = f['name']
       }
     });
-    print('new subscription is: $newSubscription');
     if (newSubscription != null) {
       SharedPreferences.getInstance().then((prefs) {  
         prefs.setString("_subscription", newSubscription);
       });
       
-      print('subscription is: $subscription');
       var w = await _clientRepository.updateSubscription(data);
-      print('dialog data is: $w');
       return w;
     } else {
       print('subscription was null');
+    }
+  }
+
+  _launchTermsURL() async {
+    const url = 'https://surveyzulu.com/policies';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+  _launchPriceURL() async {
+    const url = 'https://surveyzulu.com/pricing';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
@@ -234,7 +247,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
     }
     final Widget storeHeader = ListTile(
       leading: Icon(_isAvailable ? Icons.check : Icons.block, color: _isAvailable ? Colors.green : ThemeData.light().errorColor),
-      title: Text('The store is ' + (_isAvailable ? 'available' : 'unavailable') + '.'),
+      title: Text((_isAvailable ? 'Connected' : 'Store unavailable') + '.'),
     );
     final List<Widget> children = <Widget>[storeHeader];
 
@@ -262,11 +275,14 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
     if (!_isAvailable) {
       return Card();
     }
-    ListTile productHeader = ListTile(title: Text('Subscriptions', style: Theme.of(context).textTheme.headline));
+    ListTile productHeader = ListTile(
+      title: Text('Subscriptions', style: Theme.of(context).textTheme.headline),
+      subtitle: Text('** Note: Unless specified as annual, all subscriptions are a 1 month auto renewal basis. If specified as annual the subscription is a 1 year auto renewal. All subscriptions can be canceled at any time.', style:  Theme.of(context).textTheme.caption)
+    );
     List<ListTile> productList = <ListTile>[];
     if (_notFoundIds.isNotEmpty) {
       productList.add(ListTile(
-        title: Text('[${_notFoundIds.join(", ")}] not found', style: TextStyle(color: ThemeData.light().errorColor)),
+        title: Text('[${_notFoundIds.join(", ")}] Error retrieving subscriptions', style: TextStyle(color: ThemeData.light().errorColor)),
         subtitle: Text('There was a Error ')
       ));
     }
@@ -286,9 +302,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       return ListTile(
         title: Text(productDetails.title),
         subtitle: Text(productDetails.description),
-        trailing: previousPurchase != null
-          ? Icon(Icons.check)
-          : (subscription != productDetails.title.toLowerCase()) ? FlatButton(
+        trailing: (subscription != productDetails.title.toLowerCase()) ? FlatButton(
             child: Text(productDetails.price),
             color: Colors.green[800],
             textColor: Colors.white,
@@ -296,7 +310,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
               PurchaseParam purchaseParam = PurchaseParam(
                   productDetails: productDetails,
                   applicationUserName: id,
-                  sandboxTesting: true);
+                  sandboxTesting: false);
               if (productDetails.id == _kConsumableId) {
                 _connection.buyConsumable(
                     purchaseParam: purchaseParam,
@@ -306,7 +320,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
               }
             },
           ) : FlatButton(
-            child: Text(productDetails.price),
+            child: Icon(Icons.check),
             color: Colors.grey,
             textColor: Colors.white,
             onPressed: () {
@@ -320,6 +334,23 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       child: Column(
         children: <Widget>[
           productHeader, 
+          ButtonBar(
+            alignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              FlatButton(
+                child: Text('View pricing details', style: TextStyle(color: Colors.green[800]),), 
+                onPressed: () {
+                  _launchPriceURL();
+                },
+              ),
+              FlatButton(
+                child: Text('View our policies'),
+                onPressed: () {
+                  _launchTermsURL();
+                },
+              ),
+            ]
+          ),
           Divider()
         ] + productList
       )
@@ -327,7 +358,6 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   }
 
   Future<void> consume(String id) async {
-    print('*** hit consume with id: $id');
     await ConsumableStore.consume(id);
     final List<String> consumables = await ConsumableStore.load();
     setState(() {
@@ -343,7 +373,6 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   }
 
   void deliverProduct(PurchaseDetails purchaseDetails) async {
-    print('PRODUCT ID PURCHASED: ${purchaseDetails.productID.toString()}');
     // IMPORTANT!! Always verify a purchase purchase details before delivering the product.
     if (purchaseDetails.productID == _kConsumableId) {
       await ConsumableStore.save(purchaseDetails.purchaseID);
@@ -373,8 +402,6 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
   Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) {
 
     print('Verify Product ID ${purchaseDetails.productID}');
-    print('Verify Purchase ID ${purchaseDetails.purchaseID}');
-    print('Verify Purchase DATA SOURCE ${purchaseDetails.verificationData.source}');
 
     return Future<bool>.value(true);
   }
@@ -388,20 +415,15 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       ListTile(title: Card(child: innerTile));
 
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
-    print('*** Hit purchase update');
     purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
       if (purchaseDetails.status == PurchaseStatus.pending) {
-        print('*** Purchase Pending');
         showPendingUI();
       } else {
-        print('Purchase status : ${purchaseDetails.status}');
         if (purchaseDetails.status == PurchaseStatus.error) {
           print("ERROR PURCHASING: ${purchaseDetails.error.source}");
           handleError(purchaseDetails.error);
         } else if (purchaseDetails.status == PurchaseStatus.purchased) {
-          print('*** Purchase Purchased ${purchaseDetails.productID}');
           bool valid = await _verifyPurchase(purchaseDetails);
-          print("Verify Valid Purchase: $valid");
           if (valid) {
             Payment temp = new Payment(purchaseDetails.productID, purchaseDetails.purchaseID);
             bool done = await updateSubscription(temp);
@@ -415,10 +437,8 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
           }
         }
         if (Platform.isIOS) {
-          print('*** Platform is IOS');
           InAppPurchaseConnection.instance.completePurchase(purchaseDetails);
         } else if (Platform.isAndroid) {
-          print('*** Platform is ANDROID');
           if (!kAutoConsume && purchaseDetails.productID == _kConsumableId) {
             InAppPurchaseConnection.instance.consumePurchase(purchaseDetails);
           }

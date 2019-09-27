@@ -22,7 +22,6 @@ class AddUpdateBloc extends Bloc<AddUpdateEvent, AddUpdateState> {
 
   @override
   Stream<AddUpdateState> mapEventToState(AddUpdateEvent event) async* {
-    print('* BLOC Add/Update State Event is: $event');
     if (event is AddButtonPressed) {
       yield* _mapAddPressedToState(
         survey: event.survey      );

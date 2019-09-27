@@ -322,7 +322,6 @@ class _EditProfileFormState extends State<EditProfileForm> {
             );
         }
         if (state.isSuccess) {
-          print('&@&@&@& ADD EDIT FORM SUBMIT SUCCESS &@&@&@&');
           BlocProvider.of<AuthenticationBloc>(context).dispatch(LoggedIn());
         }
       },
@@ -470,7 +469,6 @@ class _EditProfileFormState extends State<EditProfileForm> {
   }
 
   _submitForm(ClientModel client) async {
-    print('hit submit form');
     _fbKey.currentState.save();
     widget.onSave(client);
     _profileBloc.dispatch(

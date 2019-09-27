@@ -20,7 +20,6 @@ class SurveyDetailBloc extends Bloc<SurveyDetailEvent, SurveyDetailState> {
 
   @override
   Stream<SurveyDetailState> mapEventToState(SurveyDetailEvent event) async* {
-    print('** Survey State Event is: $event');
     if (event is RetrieveSurveyById) {
       yield SurveyByIdLoading();
       await Future.delayed(Duration(seconds: 2));
@@ -55,9 +54,6 @@ class SurveyDetailBloc extends Bloc<SurveyDetailEvent, SurveyDetailState> {
     SurveyDetailState currentState,
     UpdateNewSurvey event,
   ) async* {
-    print('** HIT _mapUpdateSurveyToState');
-    print('** event is: $event');
-    print('** currentState is: $currentState');
     Survey survey = await _surveyRepository.updateSurvey(event.updatedSurvey);
     // if (data) {
       yield UpdateSuccessful(survey);

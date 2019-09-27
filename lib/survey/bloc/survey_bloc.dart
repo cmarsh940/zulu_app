@@ -20,7 +20,6 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
 
   @override
   Stream<SurveyState> mapEventToState(SurveyEvent event) async* {
-    print('** Survey State Event is: $event');
     if (event is LoadSurvey) {
       yield* _mapLoadSurveyToState();
     } else if (event is CloseSurvey) {
@@ -39,12 +38,9 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   }
 
   Stream<SurveyState> _mapLoadSurveyToState() async* {
-    print('** HIT _mapLoadSurveyToState');
     try {
       var survey = await _surveyRepository.loadSurvey();
       var categories = await _surveyRepository.loadCategories(); 
-      print('_categories $categories');
-      print('survey is: $survey');
       if (survey == null) {
         print('**** ERROR SURVEY RETURNED NULL');
         yield SurveyNotLoaded();
@@ -64,12 +60,10 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     SurveyState currentState,
     CloseSurvey event,
   ) async* {
-    print('** HIT _mapCloseSurveyToState');
     try {
         final id = event.id;
         final bool data = await _surveyRepository.closeSurvey(id);
         if( data == true) {
-          print(' Closed survey returned: $data');
 //          _mapLoadSurveyToState();
            yield SurveyClosedSuccess(data);
         } else {
@@ -84,7 +78,6 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     SurveyState currentState,
     OpenSurvey event,
   ) async* {
-    print('** HIT _mapOpenSurveyToState');
     try {
         final id = event.id;
         final bool data = await _surveyRepository.openSurvey(id);
@@ -102,7 +95,6 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     SurveyState currentState,
     AddSurvey event,
   ) async* {
-    print('** HIT _mapAddSurveyToState');
     if (currentState is SurveyLoaded) {
       final List<Survey> updatedSurvey = List.from(currentState.survey)
         ..add(event.survey);
@@ -115,7 +107,6 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     SurveyState currentState,
     UpdateSurvey event,
   ) async* {
-    print('** HIT _mapUpdateSurveyToState');
     if (currentState is SurveyLoaded) {
       final List<Survey> updatedSurvey = currentState.survey.map((survey) {
         return survey.id == event.updatedSurvey.id ? event.updatedSurvey : survey;
@@ -129,7 +120,6 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     SurveyState currentState,
     DeleteSurvey event,
   ) async* {
-    print('** HIT _mapDeleteSurveyToState');
     if (currentState is SurveyLoaded) {
       final updatedSurvey =
           currentState.survey.where((survey) => survey.id != event.survey.id).toList();
@@ -140,7 +130,6 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
 
 
   Future _saveSurvey(List<Survey> surveys) {
-    print('** HIT _saveSurvey Future');
     return _surveyRepository.saveSurvey(
       surveys.toList(),
     );

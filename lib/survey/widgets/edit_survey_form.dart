@@ -85,7 +85,6 @@ class _EditSurveyFormState extends State<EditSurveyForm> {
     setState(() {
       _subscription = subscription;
     });
-    print('Subscription is $_subscription');
   }
     
   @override
@@ -122,7 +121,6 @@ class _EditSurveyFormState extends State<EditSurveyForm> {
             );
         }
         if (state.isSuccess) {
-          print('&@&@&@& ADD EDIT FORM SUBMIT SUCCESS &@&@&@&');
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
               return SurveyPage(surveyRepository: _surveyRepository);
@@ -468,7 +466,6 @@ class _EditSurveyFormState extends State<EditSurveyForm> {
   }
 
   _submitForm(Survey survey) async {
-    print('hit submit form');
     _fbKey.currentState.save();
     widget.onSave(survey);
     _addUpdateBloc.dispatch(

@@ -44,7 +44,6 @@ class DonutChart extends StatelessWidget {
 
   /// Create one series with sample hard coded data.
   static List<charts.Series<ChartData, String>> _createData(List<OptionAnswers> options) {
-    print('options length : ${options.length}');
     var data = new List<ChartData>();
     options.forEach((f) { 
         data.add(new ChartData(f.name, f.count));

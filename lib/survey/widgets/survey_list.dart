@@ -6,6 +6,7 @@ import 'package:project_z/auth/authentication.dart';
 import 'package:project_z/common/common.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/models/survey.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../survey.dart';
 
@@ -39,6 +40,24 @@ class _SurveyListState extends State<SurveyList> {
   void dispose() { 
     _surveyBloc.dispose();
     super.dispose();
+  }
+
+  _launchTermsURL() async {
+    const url = 'https://surveyzulu.com/policies/terms';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchPrivacyURL() async {
+    const url = 'https://surveyzulu.com/policies/usage';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
 
@@ -87,38 +106,77 @@ Future _settingsDialog(BuildContext context) async {
           title: Text('Settings', style: TextStyle(decoration: TextDecoration.underline), textAlign: TextAlign.center),
           children: <Widget>[
             Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                FlatButton(
-                  child: Text(
-                    "Profile",
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
+                Container(
+                  width: double.infinity,
+                  child: FlatButton.icon(
+                    icon: Icon(Icons.person), //`Icon` to display
+                    label: Text('Profile', 
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                      ),
                     ),
+                    onPressed: () {
+                      BlocProvider.of<AuthenticationBloc>(context).dispatch(
+                        Profile(),
+                      );
+                      Navigator.pop(context);
+                    },
                   ),
-                  onPressed: () {
-                    BlocProvider.of<AuthenticationBloc>(context).dispatch(
-                      Profile(),
-                    );
-                    Navigator.pop(context);
-                  },
                 ),
-                FlatButton(
-                  child: Text(
-                    "logout",
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
+                Container(
+                  width: double.infinity,
+                  child: FlatButton.icon(
+                    icon: Icon(Icons.info), //`Icon` to display
+                    label: Text('Terms of Use', 
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                      ),
                     ),
+                    onPressed: () {
+                      _launchTermsURL();
+                    },
                   ),
-                  onPressed: () {
-                    BlocProvider.of<AuthenticationBloc>(context).dispatch(
-                      LoggedOut(),
-                    );
-                    Navigator.pop(context);
-                  },
+                ),
+                Container(
+                  width: double.infinity,
+                  child: FlatButton.icon(
+                    icon: Icon(Icons.info), //`Icon` to display
+                    label: Text('Privacy Policy', 
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                      ),
+                    ),
+                    onPressed: () {
+                      _launchPrivacyURL();
+                    },
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  child: FlatButton.icon(
+                    icon: Icon(Icons.exit_to_app), //`Icon` to display
+                    label: Text('Logout', 
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                      ),
+                    ),
+                    onPressed: () {
+                      BlocProvider.of<AuthenticationBloc>(context).dispatch(
+                        LoggedOut(),
+                      );
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
               ]
             )
@@ -173,10 +231,8 @@ Future _settingsDialog(BuildContext context) async {
         // ignore: missing_return
         builder: (context, state) {
           if (state is SurveyUninitialized) {
-            print('state is uninitialized in survey list');
             return SplashPage();
           } else if (state is SurveyNotLoaded) {
-            print("No Surveys found");
             return Scaffold(
               appBar: AppBar(
                 title: Text('No Surveys Found!'),
@@ -292,7 +348,6 @@ Future _settingsDialog(BuildContext context) async {
                               tooltip: 'options',
                               onPressed: () async {
                                 final actionName = await _asyncSimpleDialog(context, surveys.active);
-                                print("Selected Action is $actionName");
                                 if (actionName == 'close') {
                                     _closeSurvey(surveys.id);
                                 }

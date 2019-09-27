@@ -22,7 +22,6 @@ class AuthenticationBloc
   Stream<AuthenticationState> mapEventToState(
     AuthenticationEvent event,
   ) async* {
-    print('* Authentication State Event is: $event');
     if (event is AppStarted) {
       yield* _mapAppStartedToState();
     } else if (event is LoggedIn) {
@@ -58,19 +57,15 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _mapProfileToState() async* {
-    print('AUTH BLOC HIT MAP PROFILE TO STATE');
     try {
       final isSignedIn = await _clientRepository.isSignedIn();
       if (isSignedIn == null || !isSignedIn) {
         print('Not signed in');
         yield Unauthenticated();
       } else {
-        print('About to get client data');
         var client = await _clientRepository.getClient();
         Map clientMap = jsonDecode(client);
         final ClientModel newClient = new ClientModel.fromJson(clientMap);
-        print("NEW CLIENT: ${newClient.toJson()}");
-        print("NEW CLIENT NAME: ${newClient.firstName}");
         yield ClientProfile(newClient);
       }
     } catch (_) {

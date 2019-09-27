@@ -35,7 +35,6 @@ class SurveyRepository {
   }
 
   Future<dynamic> loadQuestionTypes() async {
-  print('HIT LOAD SURVEY ON REPOSITORY');
     var url = getQuestionTypesURL;
     var response =  await http.get(url);
     QuestionTypes _questionTypes = QuestionTypes.fromJson(json.decode(response.body));
@@ -51,7 +50,6 @@ class SurveyRepository {
   }
   
   Future<dynamic> loadSurvey() async {
-  print('HIT LOAD SURVEY ON REPOSITORY');
     var id = await getId();
     if (id == null) {
       return null;
@@ -63,7 +61,6 @@ class SurveyRepository {
   }
 
   Future<dynamic> loadCategories() async {
-  print('HIT LOAD CATEGORIES ON REPOSITORY');
     var checkCategories = await getCategories();
     if (checkCategories == null) {
       var url = getCategoriesURL;
@@ -87,7 +84,6 @@ class SurveyRepository {
   }
 
   Future<Survey> getSingleSurvey(String id) async {
-    print('HIT GET SINGLE SURVEY ON REPOSITORY WITH ID: $id');
     if (id == null) {
       return null;
     } else {
@@ -106,7 +102,6 @@ class SurveyRepository {
     }
   }
   Future<bool> closeSurvey(String _id) async {
-    print('HIT CLOSE SURVEY ON REPOSITORY WITH ID');
     SharedPreferences pref = await SharedPreferences.getInstance();
     String _token = pref.getString("client_token");
     var id = _id;
@@ -133,7 +128,6 @@ class SurveyRepository {
     }
   }
   Future<bool> openSurvey(String _id) async {
-    print('HIT OPEN SURVEY ON REPOSITORY');
     SharedPreferences pref = await SharedPreferences.getInstance();
     String _token = pref.getString("client_token");
     var id = _id;
@@ -161,7 +155,6 @@ class SurveyRepository {
   }
 
   Future updateSurvey(Survey survey) async {
-    print('HIT UPDATE SURVEY');
     SharedPreferences pref = await SharedPreferences.getInstance();
     String _token = pref.getString("client_token");
     var id = survey.id;
@@ -189,7 +182,6 @@ class SurveyRepository {
   }
 
   Future addSurvey(dynamic survey) async {
-    print('HIT ADD SURVEY');
     SharedPreferences pref = await SharedPreferences.getInstance();
     String _token = pref.getString("client_token");
     var url = postSurveyURL;
@@ -202,7 +194,6 @@ class SurveyRepository {
         HttpHeaders.authorizationHeader: "Bearer $_token",
       },
     );
-    print('response is: ${response.body}');
     if (response.statusCode == 200) {
       var data = int.parse(response.body);
       pref.setInt('_count', data);

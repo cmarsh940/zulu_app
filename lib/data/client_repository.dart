@@ -21,7 +21,6 @@ class ClientRepository {
     @required String email,
     @required String password,
   }) async {
-    print('login url is: $loginURL');
     var response = await http.post(loginURL, body: {'email': email, 'password': password});
     if (response.statusCode == 200) {
       Map clientMap = jsonDecode(response.body);
@@ -98,10 +97,8 @@ class ClientRepository {
 
   Future<dynamic> getClient() async {
     var id = await getId();
-    print('id is: $id');
     var url = getClientURL + '$id';
     var response =  await http.get(url);
-    print('client response is: ${response.body}');
       if (response.statusCode == 200) {
       return response.body;
      } else {
@@ -126,7 +123,6 @@ class ClientRepository {
   }
 
   Future updateClient(ClientModel client) async {
-    print('HIT UPDATE CLIENT');
     SharedPreferences pref = await SharedPreferences.getInstance();
     String _token = pref.getString("client_token");
     var id = client.id;
@@ -153,11 +149,9 @@ class ClientRepository {
     }
   }
   Future updateSubscription(Payment data) async {
-    print('HIT UPDATE SUBSCRIPTION');
     SharedPreferences pref = await SharedPreferences.getInstance();
     String _token = pref.getString("client_token");
     var id = pref.getString("client_id");
-    print('client id is: $id');
     if (id == null) {
       return null;
     } else {
@@ -171,7 +165,6 @@ class ClientRepository {
           HttpHeaders.authorizationHeader: "Bearer $_token",
         },
       );
-      print('statusCode: ${response.statusCode}');
       if (response.statusCode == 200) {
         var data = response.body;
         print('data returned is: $data');

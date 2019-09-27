@@ -38,7 +38,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
-    print('* Login State Event is: $event');
     if (event is EmailChanged) {
       yield* _mapEmailChangedToState(event.email);
     } else if (event is PasswordChanged) {
@@ -76,7 +75,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     String email,
     String password,
   }) async* {
-    print('HIT BLOC LOGIN');
     yield LoginState.loading();
     
     var response =  await _clientRepository.authenticate(
@@ -84,7 +82,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       password: password,
     );
 
-    print('login response is: $response');
     if (response != null) {
       yield LoginState.success();
     } else {

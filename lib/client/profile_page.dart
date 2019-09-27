@@ -98,12 +98,12 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             Center(child: Divider()),
-            // ListTile(
-            //   title: Text('Subscription'),
-            //   subtitle: client?.subscription== null ? null : Text(
-            //     client?.subscription.toString() ?? "",
-            //   ),
-            // ),
+            ListTile(
+              title: Text('Subscription'),
+              subtitle: client?.subscription== null ? null : Text(
+                client?.subscription?.toLowerCase().toString() ?? "",
+              ),
+            ),
             ListTile(
               title: Text('Total Surveys'),
               subtitle: client?.surveys?.length == null ? null : Text(
@@ -111,9 +111,10 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             MaterialButton(
+              minWidth: 350,
               color: Theme.of(context).accentColor,
               child: Text(
-                "Subscriptions",
+                "Manage Subscription",
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () => Navigator.of(context).push(
@@ -123,9 +124,10 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             MaterialButton(
+              minWidth: 350,
               color: Theme.of(context).accentColor,
               child: Text(
-                "Edit",
+                "Edit Profile",
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () => Navigator.of(context).push(

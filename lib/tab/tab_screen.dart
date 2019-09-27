@@ -39,7 +39,6 @@ class _TabScreenState extends State<TabScreen> with SingleTickerProviderStateMix
     List categories = await _surveyRepository.getCategories();
     
     categories.forEach((f) => _categories.add(f));
-    print('Add survey categories $_categories');
   }
   
 

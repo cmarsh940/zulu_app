@@ -18,7 +18,6 @@ class SurveyPage extends StatelessWidget {
 
   _handleAction(context) async {
     int count = await _surveyRepository.getSurveyCount();
-    print('survey count is: $count');
     if (count < 1 || count == null) {
       var title = 'Out of Surveys!';
       var message = 'It looks like you used all your surveys. if you fell like you have reached this in error, contact support at support@surveyzulu.com';

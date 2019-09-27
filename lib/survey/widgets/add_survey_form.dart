@@ -95,14 +95,12 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
     setState(() {
       categories.forEach((f) => _categories.add(f));
     });
-    print('Add survey categories $_categories');
   }
   void getSubscription() async {
     String subscription = await _surveyRepository.getSubscription();
     setState(() {
       _subscription = subscription;
     });
-    print('Subscription is $_subscription');
   }
 
   void getId() async {
@@ -146,7 +144,6 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
             );
         }
         if (state.isSuccess) {
-          print('&@&@&@& ADD EDIT FORM SUBMIT SUCCESS &@&@&@&');
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
               return SurveyPage(surveyRepository: _surveyRepository);
@@ -515,8 +512,6 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
   }
 
   _submitForm(dynamic survey) async {
-    print('hit add submit form');
-    print('survey on submit are: $survey');
     _fbKey.currentState.save();
     // widget.onSave(survey);
     dynamic data = {'id': id,'survey': survey, 'questions': questions};
