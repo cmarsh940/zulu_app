@@ -40,7 +40,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   Stream<SurveyState> _mapLoadSurveyToState() async* {
     try {
       var survey = await _surveyRepository.loadSurvey();
-      var categories = await _surveyRepository.loadCategories(); 
+      await _surveyRepository.loadCategories(); 
       if (survey == null) {
         print('**** ERROR SURVEY RETURNED NULL');
         yield SurveyNotLoaded();

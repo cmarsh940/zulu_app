@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:native_widgets/native_widgets.dart';
@@ -110,7 +112,7 @@ class ProfilePage extends StatelessWidget {
                 client?.surveys?.length.toString() ?? 0,
               ),
             ),
-            MaterialButton(
+            (Platform.isIOS) ? MaterialButton(
               minWidth: 350,
               color: Theme.of(context).accentColor,
               child: Text(
@@ -122,7 +124,7 @@ class ProfilePage extends StatelessWidget {
                   return SubscriptionDialog(id: client.id, clientRepository: clientRepository);
                 }),
               ),
-            ),
+            ) : SizedBox(),
             MaterialButton(
               minWidth: 350,
               color: Theme.of(context).accentColor,
