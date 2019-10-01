@@ -20,6 +20,7 @@ const String closeSurveyURL = host + "api/appsurveys/close/";
 const String openSurveyURL = host + "api/appsurveys/open/";
 const String updateSurveyURL = host + "api/appsurveys/";
 const String getQuestionTypesURL = host + "api/questionTypes";
+const String uploadLogoURL = host + "api/appupload/logo/";
 
 
 const bool devMode = false;

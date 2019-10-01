@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:project_z/auth/authentication.dart';
 import 'package:project_z/common/common.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/models/survey.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../survey.dart';
@@ -27,9 +30,12 @@ class _SurveyListState extends State<SurveyList> {
   SurveyRepository get _surveyRepository => widget._surveyRepository;
   Completer<void> _refreshCompleter;
   int rebuilt;
+  File _image;
+  String sub;
 
   @override
   void initState() {
+    getSub();
     rebuilt = 0;
     _surveyBloc = SurveyBloc(surveyRepository: _surveyRepository)..dispatch(LoadSurvey());
     super.initState();
@@ -40,6 +46,12 @@ class _SurveyListState extends State<SurveyList> {
   void dispose() { 
     _surveyBloc.dispose();
     super.dispose();
+  }
+
+  getSub() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    sub = pref.getString("_subscription");
+    print('in sub: $sub');
   }
 
   _launchTermsURL() async {
@@ -60,10 +72,20 @@ class _SurveyListState extends State<SurveyList> {
     }
   }
 
+  Future getImage(String id) async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var name = 'picture';
 
+    setState(() {
+      _image = image;
+    });
+    
+    await _surveyRepository.uploadLogo(id, _image, name);
+    Navigator.pop(context);
+  }
   
  
-Future<String> _asyncSimpleDialog(BuildContext context, bool active) async {
+Future<String> _asyncSimpleDialog(BuildContext context,String id, bool active, String logo) async {
   return await showDialog<String>(
       context: context,
       barrierDismissible: true,
@@ -73,17 +95,23 @@ Future<String> _asyncSimpleDialog(BuildContext context, bool active) async {
           children: <Widget>[
             Column(
               children: <Widget>[
+                (sub.toLowerCase() != 'free' || sub.toLowerCase() != 'trial') ? SimpleDialogOption(
+                  onPressed: () {
+                    getImage(id);
+                  },
+                  child: (logo == '') ? Text('Add logo') : Text('Change logo'),
+                ) : SizedBox(),
                 SimpleDialogOption(
                   onPressed: () {
                     Navigator.pop(context, 'open');
                   },
-                  child: !active ? Text('Open', style: TextStyle(color: Theme.of(context).accentColor)) : SizedBox(),
+                  child: !active ? Text('Open survey', style: TextStyle(color: Theme.of(context).accentColor)) : SizedBox(),
                 ),
                 SimpleDialogOption(
                   onPressed: () {
                     Navigator.pop(context, 'close');
                   },
-                  child: active ? Text('Close', style: TextStyle(color: Colors.red)) : SizedBox(),
+                  child: active ? Text('Close survey', style: TextStyle(color: Colors.red)) : SizedBox(),
                 ),
                 SimpleDialogOption(
                   onPressed: () {
@@ -347,7 +375,7 @@ Future _settingsDialog(BuildContext context) async {
                               icon: Icon(Icons.more_vert),
                               tooltip: 'options',
                               onPressed: () async {
-                                final actionName = await _asyncSimpleDialog(context, surveys.active);
+                                final actionName = await _asyncSimpleDialog(context, surveys.id, surveys.active, surveys.logo );
                                 if (actionName == 'close') {
                                     _closeSurvey(surveys.id);
                                 }
@@ -383,4 +411,5 @@ Future _settingsDialog(BuildContext context) async {
   void _openSurvey(String id) {
     _surveyBloc.dispatch(OpenSurvey(id));
   }
+  
 }

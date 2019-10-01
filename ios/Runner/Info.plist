@@ -47,6 +47,10 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Used to take picture for profile picture or survey logo</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used to choose a picture for profile picture or survey logo</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

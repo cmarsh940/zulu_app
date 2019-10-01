@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:meta/meta.dart';
+import 'package:async/async.dart';
 import 'package:project_z/models/question_types.dart';
 import 'package:project_z/models/survey.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 
 
 
@@ -204,6 +206,46 @@ class SurveyRepository {
       return null;
     }
   }
+  Future uploadLogo(String id, File file, String name) async {
+    var stream = http.ByteStream(DelegatingStream.typed(file.openRead()));
+    var length = await file.length();
+    var uri = Uri.parse(uploadLogoURL + id);
+    var request = http.MultipartRequest("POST", uri);
+    var multipartFile =
+        http.MultipartFile(name, stream, length, filename: basename(file.path));
+    request.files.add(multipartFile);
+    var response = await request.send();
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // Future uploadLogo(String id, File image) async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+  //   String _token = pref.getString("client_token");
+  //   var url = uploadLogoURL + id;
+  //   var _body = image;
+  //   var response = await http.MultipartRequest("POST",
+  //     url,
+  //     body: _body, 
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       HttpHeaders.authorizationHeader: "Bearer $_token",
+  //     },
+  //   );
+  //   if (response.statusCode == 200) {
+  //     var data = int.parse(response.body);
+  //     pref.setInt('_count', data);
+
+  //     return data;
+  //   } else {
+  //     print('Error did not return 200');
+  //     return null;
+  //   }
+  // }
 
   Future saveSurvey(List<Survey> survey) {
     var newSurveys = survey.toString();

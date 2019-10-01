@@ -21,6 +21,7 @@ class Survey {
   String creator;
   String createdAt;
   String updatedAt;
+  String logo;
   int iV;
   double averageTime;
 
@@ -44,6 +45,7 @@ class Survey {
     this.creator,
     this.createdAt,
     this.updatedAt,
+    this.logo,
     this.iV,
     this.averageTime
   });
@@ -79,6 +81,7 @@ class Survey {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     iV = json['__v'];
+    logo = (json['logo'] != null) ? json['logo'] : '';
     averageTime = (json['averageTime'] != null) ? json['averageTime'].toDouble() : 0;
   }
 
@@ -109,6 +112,7 @@ class Survey {
     data['updatedAt'] = this.updatedAt;
     data['__v'] = this.iV;
     data['averageTime'] = this.averageTime;
+    data['logo'] = this.logo;
     return data;
   }
 }
