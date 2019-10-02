@@ -78,6 +78,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
     SharedPreferences pref = await SharedPreferences.getInstance();
     subscription = pref.getString("_subscription").toLowerCase() ?? '';
   }
+
   updateSubscription(Payment data) async {
     String newSubscription;
 
@@ -100,16 +101,8 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
     }
   }
 
-  _launchTermsURL() async {
-    const url = 'https://surveyzulu.com/policies';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
   _launchPriceURL() async {
-    const url = 'https://surveyzulu.com/pricing';
+    const url = 'https://surveyzulu.com/app_pricing';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -204,7 +197,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       );
     } else {
       stack.add(Center(
-        child: Text(_queryProductError),
+        child: Text('ERROR: $_queryProductError'),
       ));
     }
     if (_purchasePending) {
@@ -300,17 +293,17 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
     productList.addAll(_products.map((ProductDetails productDetails) {
       PurchaseDetails previousPurchase = purchases[productDetails.id];
       return ListTile(
-        title: Text(productDetails.title),
-        subtitle: Text(productDetails.description),
-        trailing: (subscription != productDetails.title.toLowerCase()) ? FlatButton(
-            child: Text(productDetails.price),
+        title: Text(productDetails.title ?? 'Error'),
+        subtitle: Text(productDetails.description ?? ''),
+        trailing: (productDetails.title != null && subscription != productDetails.title.toLowerCase()) ? FlatButton(
+            child: Text(productDetails.price ?? ''),
             color: Colors.green[800],
             textColor: Colors.white,
             onPressed: () {
               PurchaseParam purchaseParam = PurchaseParam(
                   productDetails: productDetails,
                   applicationUserName: id,
-                  sandboxTesting: false);
+                  sandboxTesting: true);
               if (productDetails.id == _kConsumableId) {
                 _connection.buyConsumable(
                     purchaseParam: purchaseParam,
@@ -341,12 +334,6 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
                 child: Text('View pricing details', style: TextStyle(color: Colors.green[800]),), 
                 onPressed: () {
                   _launchPriceURL();
-                },
-              ),
-              FlatButton(
-                child: Text('View our policies'),
-                onPressed: () {
-                  _launchTermsURL();
                 },
               ),
             ]

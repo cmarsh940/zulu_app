@@ -136,7 +136,6 @@ class _LoginFormState extends State<LoginForm> {
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.all(10.0),
-                            // child: Text('*Note: You must already have an account to login. If you do not have a account please sign up at surveyzulu.com', style: TextStyle(color: Colors.red, fontSize: 12)),
                           ),
                           LoginButton(
                             onPressed: isLoginButtonEnabled(state)
@@ -166,7 +165,6 @@ class _LoginFormState extends State<LoginForm> {
                               )
                             ],
                           )
-                          // CreateAccountButton(clientRepository: _clientRepository),
                         ],
                       ),
                     ),
