@@ -84,57 +84,51 @@ class _DetailsWidgetState extends State<DetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        body: Column(
-          children: <Widget>[
-            Stack(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.11,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color.fromRGBO(21, 102, 182, 1),
-                          Color.fromRGBO(24, 115, 205, 1),
-                          Color.fromRGBO(27, 127, 228, 1),
-                        ],
-                      ),
+    return Scaffold(
+      body: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              pinned: true,
+              expandedHeight: 250.0,
+              flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.pin,
+                centerTitle: true,
+                background: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      height: 250,
+                      child: DateTimeComboLinePointChart.withData(survey),
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text('Total Answers: ${survey.totalAnswers}'),
+                        Text('Average Time: $finalAvg Sec'),
+                      ],
+                    ),
+                  ],
                 ),
-                AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0.0,
-                  title: Text(survey.name),
+              ),
+            ),
+            SliverPadding(
+                  padding: EdgeInsets.all(0),
+                  sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                    (context, i) {
+                      Questions questions = survey.questions[i];
+                      return Center(
+                        child: QuestionWidget(questions),
+                      );
+                    },
+                    childCount: survey.questions.length,
+                  )),
                 ),
-              ],
-            ),
-            Container(
-              height: 250,
-              child: DateTimeComboLinePointChart.withData(survey),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text('Total Answers: ${survey.totalAnswers}'),
-                Text('Average Time: $finalAvg Sec'),
-              ],
-            ),
-            Expanded(
-              child: new ListView.builder(
-                itemCount: survey.questions.length,
-                itemBuilder: (context, i) {
-                  Questions questions = survey.questions[i];
-                  return Center(
-                    child: QuestionWidget(questions),
-                  );
-                },
-            ),
-          ),
-        ],
-      ),
+          ],
+        ),
     );
   }
 }
