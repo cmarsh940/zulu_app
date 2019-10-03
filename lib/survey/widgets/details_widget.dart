@@ -66,16 +66,16 @@ class _DetailsWidgetState extends State<DetailsWidget> {
       }
 
       if (q.questionType == 'boolean' || q.questionType == 'goodbad' || q.questionType == 'likeunlike' || q.questionType == 'yesno' || q.questionType == 'moreless') {
-        print('********* QUESTION TYPE IS BOOLEAN *******');
         var tempAnswers = [{'name': 0, 'count': 0}, {'name': 1, 'count': 0}];
         for (var j = 0; j < q.answers.length; j++) {
           var a = q.answers[j];
           tempAnswers.forEach((f) => {
-            if(a == f['name']) {
+            if(a.toString() == f['name'].toString()) {
               f['count'] += 1
             }
           });
         }
+        print('${q.questionType} new answers are: $tempAnswers');
         q.answers = tempAnswers;
       }
     }

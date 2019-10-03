@@ -95,7 +95,7 @@ class DateTimeComboLinePointChart extends StatelessWidget {
     return [
       new charts.Series<SubmissionData, DateTime>(
         id: 'Sales',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        colorFn: (_, __) => charts.MaterialPalette.white.lighter,
         domainFn: (SubmissionData sales, _) => sales.time,
         measureFn: (SubmissionData sales, _) => sales.sales,
         data: data,
