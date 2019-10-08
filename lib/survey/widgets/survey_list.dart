@@ -8,6 +8,7 @@ import 'package:project_z/auth/authentication.dart';
 import 'package:project_z/common/common.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/models/survey.dart';
+import 'package:project_z/survey/widgets/incentive_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -74,18 +75,23 @@ class _SurveyListState extends State<SurveyList> {
 
   Future getImage(String id) async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    print(image);
     var name = 'picture';
 
-    setState(() {
-      _image = image;
-    });
-    
-    await _surveyRepository.uploadLogo(id, _image, name);
-    Navigator.pop(context);
+    if (image == null) {
+      Navigator.pop(context);
+    } else {
+      setState(() {
+        _image = image;
+      });
+      
+      await _surveyRepository.uploadLogo(id, _image, name);
+      Navigator.pop(context);
+    }
   }
   
  
-Future<String> _asyncSimpleDialog(BuildContext context,String id, bool active, String logo) async {
+Future<String> _asyncSimpleDialog(BuildContext context, String id, bool active, String logo, Survey survey) async {
   return await showDialog<String>(
       context: context,
       barrierDismissible: true,
@@ -100,6 +106,14 @@ Future<String> _asyncSimpleDialog(BuildContext context,String id, bool active, S
                     getImage(id);
                   },
                   child: (logo == '') ? Text('Add logo') : Text('Change logo'),
+                ) : SizedBox(),
+                (sub.toLowerCase() != 'free' || sub.toLowerCase() != 'trial') ? SimpleDialogOption(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) {
+                      return IncentiveDialog(id: id, surveyRepository: _surveyRepository, survey: survey);
+                    }),
+                  ),
+                  child: Text('Add survey incentive'),
                 ) : SizedBox(),
                 SimpleDialogOption(
                   onPressed: () {
@@ -375,7 +389,7 @@ Future _settingsDialog(BuildContext context) async {
                               icon: Icon(Icons.more_vert),
                               tooltip: 'options',
                               onPressed: () async {
-                                final actionName = await _asyncSimpleDialog(context, surveys.id, surveys.active, surveys.logo );
+                                final actionName = await _asyncSimpleDialog(context, surveys.id, surveys.active, surveys.logo, surveys );
                                 if (actionName == 'close') {
                                     _closeSurvey(surveys.id);
                                 }

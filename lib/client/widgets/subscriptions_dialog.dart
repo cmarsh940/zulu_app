@@ -327,17 +327,6 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       child: Column(
         children: <Widget>[
           productHeader, 
-          ButtonBar(
-            alignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              FlatButton(
-                child: Text('View pricing details', style: TextStyle(color: Colors.green[800]),), 
-                onPressed: () {
-                  _launchPriceURL();
-                },
-              ),
-            ]
-          ),
           Divider()
         ] + productList
       )

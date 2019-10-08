@@ -16,7 +16,7 @@ class Survey {
   dynamic category;
   String name;
   String lastSubmission;
-  Null experationDate;
+  String experationDate;
   String layout;
   String creator;
   String createdAt;
@@ -24,6 +24,7 @@ class Survey {
   String logo;
   int iV;
   double averageTime;
+  Incentive incentive;
 
   Survey({
     this.active,
@@ -47,7 +48,8 @@ class Survey {
     this.updatedAt,
     this.logo,
     this.iV,
-    this.averageTime
+    this.averageTime,
+    this.incentive
   });
 
   Survey.fromJson(Map<String, dynamic> json) {
@@ -75,7 +77,7 @@ class Survey {
     category = json['category'];
     name = json['name'];
     lastSubmission = json['lastSubmission'];
-    experationDate = json['experationDate'];
+    experationDate = (json['experationDate'] != null) ? json['experationDate'] : '';
     layout = json['layout'];
     creator = json['creator'];
     createdAt = json['createdAt'];
@@ -83,6 +85,9 @@ class Survey {
     iV = json['__v'];
     logo = (json['logo'] != null) ? json['logo'] : '';
     averageTime = (json['averageTime'] != null) ? json['averageTime'].toDouble() : 0;
+    incentive = json['incentive'] != null
+        ? new Incentive.fromJson(json['incentive'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -113,6 +118,9 @@ class Survey {
     data['__v'] = this.iV;
     data['averageTime'] = this.averageTime;
     data['logo'] = this.logo;
+    if (this.incentive != null) {
+      data['incentive'] = this.incentive.toJson();
+    }
     return data;
   }
 }
@@ -262,6 +270,51 @@ class Users {
     data['private'] = this.private;
     data['_meta'] = this.sMeta;
     data['_survey'] = this.sSurvey;
+    return data;
+  }
+}
+
+class Incentive {
+  String sId;
+  List<String> participants;
+  String name;
+  String drawDate;
+  String sSurvey;
+  String createdAt;
+  String updatedAt;
+  int iV;
+
+  Incentive(
+      {this.sId,
+      this.participants,
+      this.name,
+      this.drawDate,
+      this.sSurvey,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
+
+  Incentive.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    participants = json['participants'];
+    name = json['name'];
+    drawDate = json['drawDate'];
+    sSurvey = json['_survey'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+    iV = json['__v'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['participants'] = this.participants;
+    data['name'] = this.name;
+    data['drawDate'] = this.drawDate;
+    data['_survey'] = this.sSurvey;
+    data['createdAt'] = this.createdAt;
+    data['updatedAt'] = this.updatedAt;
+    data['__v'] = this.iV;
     return data;
   }
 }

@@ -38,8 +38,9 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   }
 
   Stream<SurveyState> _mapLoadSurveyToState() async* {
-    try {
+    // try {
       var survey = await _surveyRepository.loadSurvey();
+      print('surveys are: $survey');
       await _surveyRepository.loadCategories(); 
       if (survey == null) {
         print('**** ERROR SURVEY RETURNED NULL');
@@ -47,13 +48,14 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
       } else {
         List responseJson = json.decode(survey);
         var newSurvey = responseJson.map((m) => new Survey.fromJson(m)).toList();
+        
         yield SurveyLoaded(
           newSurvey
         );
       }
-    } catch (_) {
-      yield SurveyNotLoaded();
-    }
+    // } catch (_) {
+    //   yield SurveyNotLoaded();
+    // }
   }
 
   Stream<SurveyState> _mapCloseSurveyToState(

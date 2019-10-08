@@ -67,6 +67,7 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
   List _categories = [''];
   String id;
   String _subscription;
+  Incentive incentive;
 
   @override
   void initState() {
@@ -74,14 +75,14 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
     getCategories();
     getSubscription();
     getId();
-     _addUpdateBloc = BlocProvider.of<AddUpdateBloc>(context);
-     rebuild = false;
-     Question first = Question();
-     first.questionType = '';
-     first.question = '';
-     first.options = [];
-     first.options.add(new NewOptions());
-     questions.add(first);
+    _addUpdateBloc = BlocProvider.of<AddUpdateBloc>(context);
+    rebuild = false;
+    Question first = Question();
+    first.questionType = '';
+    first.question = '';
+    first.options = [];
+    first.options.add(new NewOptions());
+    questions.add(first);
   }
 
   @override
@@ -459,7 +460,9 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
                     //     ]
                     //   ) 
                     //   : SizedBox(),
-                    // ),
+                    // )
+
+
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Row(

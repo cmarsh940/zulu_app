@@ -183,6 +183,33 @@ class SurveyRepository {
     }
   }
 
+  Future<dynamic> updateIncentive({
+    @required String id,
+    @required TempIncentive form,
+  }) async {
+    // SharedPreferences pref = await SharedPreferences.getInstance();
+    // String _token = pref.getString("client_token");
+    // var id = data.id;
+    if (id == null || form == null) {
+      return null;
+    } else {
+      TempIncentive _incentive = form;
+      var name = _incentive.name;
+      var date = _incentive.date;
+      print('name: $name');
+      print('date: $date');
+      var url = updateSurveyIncentiveURL + '$id';
+      var response = await http.post(url, body: {'name': name, 'date': date});
+      final int statusCode = response.statusCode;
+
+      if (statusCode < 200 || statusCode > 400 || json == null) {
+        throw new Exception("Error while fetching data");
+      }
+      print('response: ${response.body}');
+      return response.body;
+    }
+  }
+
   Future addSurvey(dynamic survey) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     String _token = pref.getString("client_token");
@@ -285,6 +312,24 @@ class TempCategory {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['name'] = this.name;
+    return data;
+  }
+}
+class TempIncentive {
+  dynamic date;
+  dynamic name;
+
+  TempIncentive(this.date,this.name);
+
+  TempIncentive.fromJson(Map<dynamic, dynamic> json) {
+    date = json['date'];
+    name = json['name'];
+  }
+
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
+    data['id'] = this.date;
     data['name'] = this.name;
     return data;
   }
