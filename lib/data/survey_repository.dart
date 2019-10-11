@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:async/async.dart';
 import 'package:project_z/models/question_types.dart';
 import 'package:project_z/models/survey.dart';
+import 'package:project_z/survey/widgets/add_user_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
@@ -200,6 +201,34 @@ class SurveyRepository {
       print('date: $date');
       var url = updateSurveyIncentiveURL + '$id';
       var response = await http.post(url, body: {'name': name, 'date': date});
+      final int statusCode = response.statusCode;
+
+      if (statusCode < 200 || statusCode > 400 || json == null) {
+        throw new Exception("Error while fetching data");
+      }
+      print('response: ${response.body}');
+      return response.body;
+    }
+  }
+  
+  Future<dynamic> addUser({
+    @required String id,
+    @required TempUser form,
+  }) async {
+    // SharedPreferences pref = await SharedPreferences.getInstance();
+    // String _token = pref.getString("client_token");
+    // var id = data.id;
+    if (id == null || form == null) {
+      return null;
+    } else {
+      TempUser _user = form;
+      var name = _user.name;
+      var email = _user.email;
+      var phone = _user.phone;
+      print('name: $name');
+
+      var url = addUserURL + '$id';
+      var response = await http.post(url, body: {'name': name, 'email': email, 'phone': phone});
       final int statusCode = response.statusCode;
 
       if (statusCode < 200 || statusCode > 400 || json == null) {

@@ -8,6 +8,7 @@ import 'package:project_z/auth/authentication.dart';
 import 'package:project_z/common/common.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/models/survey.dart';
+import 'package:project_z/survey/users_page.dart';
 import 'package:project_z/survey/widgets/incentive_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -114,6 +115,14 @@ Future<String> _asyncSimpleDialog(BuildContext context, String id, bool active, 
                     }),
                   ),
                   child: Text('Add survey incentive'),
+                ) : SizedBox(),
+                (sub.toLowerCase() != 'free' || sub.toLowerCase() != 'trial') ? SimpleDialogOption(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) {
+                      return UsersPage(surveyRepository: _surveyRepository, survey: survey);
+                    }),
+                  ),
+                  child: Text('Add users'),
                 ) : SizedBox(),
                 SimpleDialogOption(
                   onPressed: () {

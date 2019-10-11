@@ -68,7 +68,7 @@ class Survey {
     surveyTime = json['surveyTime'];
     totalAnswers = json['totalAnswers'];
     if (json['users'] != null) {
-      users = new List<Null>();
+      users = new List<Users>();
       json['users'].forEach((v) {
         users.add(new Users.fromJson(v));
       });
