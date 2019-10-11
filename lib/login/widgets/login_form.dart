@@ -13,7 +13,7 @@ import 'package:project_z/utils/popUp.dart';
 import '../login.dart';
 import 'login_button.dart';
 
-FacebookLogin _facebookLogin = FacebookLogin();
+// FacebookLogin _facebookLogin = FacebookLogin();
 
  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
 class LoginForm extends StatefulWidget {
@@ -32,6 +32,7 @@ class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   int rebuild;
+  static final FacebookLogin facebookSignIn = new FacebookLogin();
 
   LoginBloc _loginBloc;
 
@@ -236,10 +237,13 @@ class _LoginFormState extends State<LoginForm> {
   Future<void> _handleFacebookSignIn() async {
     String email;
     String id;
-    final results = await _facebookLogin.logInWithReadPermissions(['email']);
-    switch (results.status) {
+    final FacebookLoginResult result =
+        await facebookSignIn.logIn(['email']);
+
+    switch (result.status) {
       case FacebookLoginStatus.loggedIn:
-        final token = results.accessToken.token;
+        final FacebookAccessToken accessToken = result.accessToken;
+        final token = accessToken.token;
         final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=$token');
         Map profile = json.decode(graphResponse.body);
         for (var i = 0; i < profile.length; i++) {
@@ -260,13 +264,13 @@ class _LoginFormState extends State<LoginForm> {
         );
         break;
 
-      case FacebookLoginStatus.cancelledByUser :
-        var title = 'Facebook Signin Error';
-        var message = 'There was a problem signing in with Facebook.';
+      case FacebookLoginStatus.cancelledByUser:
+        var title = 'Facebook Signin Cancelled';
+        var message = 'Cacelled signing into facebook';
         showAlertPopup(context, title, message);
         break;
 
-      case FacebookLoginStatus.error :
+      case FacebookLoginStatus.error:
         print('FACEBOOK LOGIN ERROR');
         var title = 'Facebook Signin Error';
         var message = 'There was a problem signing in with Facebook.';
@@ -274,9 +278,7 @@ class _LoginFormState extends State<LoginForm> {
         setState(() {
           rebuild += 1;
         });
-
         break;
     }
-
   }
 }
