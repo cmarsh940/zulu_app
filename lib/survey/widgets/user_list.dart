@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/models/survey.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 
@@ -42,6 +43,51 @@ class _UserListState extends State<UserList> {
     });
   }
 
+  _launchTermsURL(Users user) async {
+    var url = 'https://surveyzulu.com/pSurvey/${user.sId}/${survey.id}';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+  
+  Future<String> _asyncSimpleDialog(BuildContext context, Users user) async {
+  return await showDialog<String>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Text('Survey Action', style: TextStyle(decoration: TextDecoration.underline), textAlign: TextAlign.center),
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                SimpleDialogOption(
+                  onPressed: () {
+                    _launchTermsURL(user);
+                  },
+                  child: Text('Take Survey', style: TextStyle(color: Colors.black)),
+                ),
+                SimpleDialogOption(
+                  onPressed: () {
+                    print(user.sId);
+                    // Navigator.pop(context, 'close');
+                  },
+                  child: Text('Remove User', style: TextStyle(color: Colors.red)),
+                ),
+                SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancel', style: TextStyle(color: Colors.black)),
+                ),
+              ]
+            )
+          ],
+        );
+      });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +105,21 @@ class _UserListState extends State<UserList> {
                 //     builder: (BuildContext context) =>
                 //         ContactDetailsPage(c)));
               },
+              leading: Icon(Icons.person_outline),
               title: Text(u.name ?? ""),
-
-              );
-            },
-          ) : Center(child: Text('No users added'))
-        ),
-      );
+              subtitle: Text(u.phone ?? ""),
+              trailing: IconButton(
+                icon: Icon(Icons.more_vert),
+                tooltip: 'options',
+                onPressed: () async {
+                  final actionName = await _asyncSimpleDialog(context, u);
+                  
+                },
+              ),
+            );
+          },
+        ) : Center(child: Text('No users added'))
+      ),
+    );
   }
 }
