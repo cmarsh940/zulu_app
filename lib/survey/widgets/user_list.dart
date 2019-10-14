@@ -51,6 +51,15 @@ class _UserListState extends State<UserList> {
       throw 'Could not launch $url';
     }
   }
+
+  _removeUser(String id) async {
+    List<Users> updatedUsers = await _surveyRepository.removeUser(id: id);
+    print('response is: $updatedUsers');
+    setState(() {
+      users = updatedUsers;
+    });
+    Navigator.pop(context);
+  }
   
   Future<String> _asyncSimpleDialog(BuildContext context, Users user) async {
   return await showDialog<String>(
@@ -70,7 +79,7 @@ class _UserListState extends State<UserList> {
                 ),
                 SimpleDialogOption(
                   onPressed: () {
-                    print(user.sId);
+                    _removeUser(user.sId);
                     // Navigator.pop(context, 'close');
                   },
                   child: Text('Remove User', style: TextStyle(color: Colors.red)),

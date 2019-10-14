@@ -239,6 +239,29 @@ class SurveyRepository {
     }
   }
 
+  Future<dynamic> removeUser({
+    @required String id,
+  }) async {
+    // SharedPreferences pref = await SharedPreferences.getInstance();
+    // String _token = pref.getString("client_token");
+    // var id = data.id;
+    if (id == null) {
+      return null;
+    } else {
+      var url = deleteUserURL + '$id';
+      var response = await http.put(url, body: {'id': id});
+      final int statusCode = response.statusCode;
+
+      if (statusCode < 200 || statusCode > 400 || json == null) {
+        throw new Exception("Error while fetching data");
+      }
+      print('response: ${response.body}');
+      List data = json.decode(response.body);
+      var newData = data.map((m) => new Users.fromJson(m)).toList();
+      return newData;
+    }
+  }
+
   Future addSurvey(dynamic survey) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     String _token = pref.getString("client_token");

@@ -116,13 +116,13 @@ Future<String> _asyncSimpleDialog(BuildContext context, String id, bool active, 
                   ),
                   child: Text('Add survey incentive'),
                 ) : SizedBox(),
-                (sub.toLowerCase() != 'free' || sub.toLowerCase() != 'trial') ? SimpleDialogOption(
+                (survey.private) ? SimpleDialogOption(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) {
                       return UsersPage(surveyRepository: _surveyRepository, survey: survey);
                     }),
                   ),
-                  child: Text('Add users'),
+                  child: Text('Manage users'),
                 ) : SizedBox(),
                 SimpleDialogOption(
                   onPressed: () {

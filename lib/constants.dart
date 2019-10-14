@@ -5,8 +5,8 @@ enum AlertAction {
   agree,
 }
 
-// const host = 'https://surveyzulu.com/';
- const host = 'http://127.0.0.1:8000/';
+const host = 'https://surveyzulu.com/';
+//  const host = 'http://127.0.0.1:8000/';
 
 const String loginURL = host + "api/clients/applogin";
 const String getCategoriesURL = host + "api/survey-categories";
@@ -21,6 +21,7 @@ const String openSurveyURL = host + "api/appsurveys/open/";
 const String updateSurveyURL = host + "api/appsurveys/";
 const String updateSurveyIncentiveURL = host + "api/appsurveys/incentive/";
 const String addUserURL = host + "api/appsurveys/user/";
+const String deleteUserURL = host + "api/appsurveys/user/d/";
 const String getQuestionTypesURL = host + "api/questionTypes";
 const String uploadLogoURL = host + "api/appupload/logo/";
 

@@ -126,7 +126,8 @@ class _AddUserDialogState extends State<AddUserDialog> with WidgetsBindingObserv
    _submitForm() async {
       _fbKey.currentState.save();
   
-      await _surveyRepository.addUser(id: id, form: user);
+      var data = await _surveyRepository.addUser(id: id, form: user);
+      print('add User: $data');
       Navigator.pop(context);
     }
   }
