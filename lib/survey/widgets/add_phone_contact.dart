@@ -1,9 +1,7 @@
-import 'dart:async';
 
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 
 
 
@@ -23,41 +21,41 @@ class _AddPhoneContactState extends State<AddPhoneContact> {
   }
 
   refreshContacts() async {
-    PermissionStatus permissionStatus = await _getContactPermission();
-    if (permissionStatus == PermissionStatus.granted) {
+    // PermissionStatus permissionStsatus = await _getContactPermission();
+    // if (permissionStatus == PermissionStatus.granted) {
       var contacts = await ContactsService.getContacts();
 //      var contacts = await ContactsService.getContactsForPhone("8554964652");
       setState(() {
         _contacts = contacts;
       });
-    } else {
-      _handleInvalidPermissions(permissionStatus);
-    }
+    // } else {
+    //   _handleInvalidPermissions(permissionStatus);
+    // }
   }
   
-  Future<PermissionStatus> _getContactPermission() async {
-    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.contacts);
-    if (permission != PermissionStatus.granted && permission != PermissionStatus.disabled) {
-      Map<PermissionGroup, PermissionStatus> permissionStatus = await PermissionHandler().requestPermissions([PermissionGroup.contacts]);
-      return permissionStatus[PermissionGroup.contacts] ?? PermissionStatus.unknown;
-    } else {
-      return permission;
-    }
-  }
+  // Future<PermissionStatus> _getContactPermission() async {
+  //   PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.contacts);
+  //   if (permission != PermissionStatus.granted && permission != PermissionStatus.disabled) {
+  //     Map<PermissionGroup, PermissionStatus> permissionStatus = await PermissionHandler().requestPermissions([PermissionGroup.contacts]);
+  //     return permissionStatus[PermissionGroup.contacts] ?? PermissionStatus.unknown;
+  //   } else {
+  //     return permission;
+  //   }
+  // }
 
-  void _handleInvalidPermissions(PermissionStatus permissionStatus) {
-    if (permissionStatus == PermissionStatus.denied) {
-      throw new PlatformException(
-          code: "PERMISSION_DENIED",
-          message: "Access to location data denied",
-          details: null);
-    } else if (permissionStatus == PermissionStatus.disabled) {
-      throw new PlatformException(
-          code: "PERMISSION_DISABLED",
-          message: "Location data is not available on device",
-          details: null);
-    }
-  }
+  // void _handleInvalidPermissions(PermissionStatus permissionStatus) {
+  //   if (permissionStatus == PermissionStatus.denied) {
+  //     throw new PlatformException(
+  //         code: "PERMISSION_DENIED",
+  //         message: "Access to location data denied",
+  //         details: null);
+  //   } else if (permissionStatus == PermissionStatus.disabled) {
+  //     throw new PlatformException(
+  //         code: "PERMISSION_DISABLED",
+  //         message: "Location data is not available on device",
+  //         details: null);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -41,8 +41,6 @@ PODS:
     - Reachability
   - local_auth (0.0.1):
     - Flutter
-  - permission_handler (3.2.2):
-    - Flutter
   - Reachability (3.2)
   - shared_preferences (0.0.1):
     - Flutter
@@ -58,7 +56,6 @@ DEPENDENCIES:
   - in_app_purchase (from `.symlinks/plugins/in_app_purchase/ios`)
   - keyboard_visibility (from `.symlinks/plugins/keyboard_visibility/ios`)
   - local_auth (from `.symlinks/plugins/local_auth/ios`)
-  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
@@ -88,8 +85,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/keyboard_visibility/ios"
   local_auth:
     :path: ".symlinks/plugins/local_auth/ios"
-  permission_handler:
-    :path: ".symlinks/plugins/permission_handler/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
   url_launcher:
@@ -105,11 +100,10 @@ SPEC CHECKSUMS:
   GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
   GoogleToolboxForMac: b3553629623a3b1bff17f555e736cd5a6d95ad55
   GTMSessionFetcher: 61bb0f61a4cb560030f1222021178008a5727a23
-  image_picker: 16e5fec1fbc87fd3b297c53e4048521eaf17cd06
+  image_picker: e3eacd46b94694dde7cf2705955cece853aa1a8f
   in_app_purchase: 5e80de181441b1c149372237f5e65255455e175f
   keyboard_visibility: 96a24de806fe6823c3ad956c01ba2ec6d056616f
   local_auth: 17f985934bb4ab2637431e5b3fe1b2d6698d2051
-  permission_handler: d59f41439f5bc6c4d1005f3355e98f05ddc68ece
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
   url_launcher: 0067ddb8f10d36786672aa0722a21717dba3a298

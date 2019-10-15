@@ -115,7 +115,7 @@ Future<String> _asyncSimpleDialog(BuildContext context, String id, bool active, 
                     }),
                   ),
                   child: Text('Add survey incentive'),
-                ) : SizedBox(),
+                ) : SizedBox(width: 0.0, height: 0.0),
                 (survey.private) ? SimpleDialogOption(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) {
@@ -123,18 +123,23 @@ Future<String> _asyncSimpleDialog(BuildContext context, String id, bool active, 
                     }),
                   ),
                   child: Text('Manage users'),
-                ) : SizedBox(),
+                ) : SizedBox(
+                  width: 0.0,
+                  height: 0.0,
+                ),
                 SimpleDialogOption(
                   onPressed: () {
                     Navigator.pop(context, 'open');
                   },
-                  child: !active ? Text('Open survey', style: TextStyle(color: Theme.of(context).accentColor)) : SizedBox(),
+                  child: !active ? Text('Open survey', style: TextStyle(color: Theme.of(context).accentColor)) : SizedBox(
+                    width: 0.0, height: 0.0),
                 ),
                 SimpleDialogOption(
                   onPressed: () {
                     Navigator.pop(context, 'close');
                   },
-                  child: active ? Text('Close survey', style: TextStyle(color: Colors.red)) : SizedBox(),
+                  child: active ? Text('Close survey', style: TextStyle(color: Colors.red)) : SizedBox(
+                    width: 0.0, height: 0.0),
                 ),
                 SimpleDialogOption(
                   onPressed: () {
