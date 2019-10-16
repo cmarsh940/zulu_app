@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:contacts_service/contacts_service.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/models/survey.dart';
 import 'package:project_z/survey/widgets/add_user_dialog.dart';
@@ -19,7 +18,6 @@ class UsersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
     return Scaffold(
       body: Center(
         child: UserList(surveyRepository: _surveyRepository, survey: survey),

@@ -52,6 +52,29 @@ class _UserListState extends State<UserList> {
     }
   }
 
+  _sendEmail(Users user) async {
+    var subject = 'Take%20our%20Survey';
+    var surveyUrl = 'https://surveyzulu/pSurvey/${user.sId}/${user.sSurvey}';
+    var output = 'Please%20participate%20in%20our%20survey.%20$surveyUrl';
+    var url = 'mailto:${user.email}?subject=$subject&body=$output';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+  _sendSMS(Users user) async {
+    var newPhone = int.parse(user.phone);
+    var surveyUrl = 'https://surveyzulu/pSurvey/${user.sId}/${user.sSurvey}';
+    var output = 'Please%20participate%20in%20our%20survey.%20$surveyUrl';
+    var url = 'sms:$newPhone?&body=$output';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   _removeUser(String id) async {
     List<Users> updatedUsers = await _surveyRepository.removeUser(id: id);
     print('response is: $updatedUsers');
@@ -76,6 +99,24 @@ class _UserListState extends State<UserList> {
                     _launchTermsURL(user);
                   },
                   child: Text('Take Survey', style: TextStyle(color: Colors.black)),
+                ),
+                (user.email != '' && !user.emailSent) ? SimpleDialogOption(
+                  onPressed: () {
+                    _sendEmail(user);
+                  },
+                  child: Text('Email Survey', style: TextStyle(color: Colors.black)),
+                ) : SizedBox(
+                  width: 0.0,
+                  height: 0.0,
+                ),
+                (user.phone != '' && !user.textSent) ? SimpleDialogOption(
+                  onPressed: () {
+                    _sendSMS(user);
+                  },
+                  child: Text('Send Text', style: TextStyle(color: Colors.black)),
+                ) : SizedBox(
+                  width: 0.0,
+                  height: 0.0,
                 ),
                 SimpleDialogOption(
                   onPressed: () {
@@ -116,13 +157,13 @@ class _UserListState extends State<UserList> {
               },
               leading: Icon(Icons.person_outline),
               title: Text(u.name ?? ""),
-              subtitle: Text(u.phone ?? ""),
+              subtitle: (u.phone != '') ? Text(u.phone) : (u.email != '') ? Text(u.email) : '',
               trailing: IconButton(
                 icon: Icon(Icons.more_vert),
                 tooltip: 'options',
                 onPressed: () async {
                   final actionName = await _asyncSimpleDialog(context, u);
-                  
+                  print('dialog action name = $actionName');
                 },
               ),
             );

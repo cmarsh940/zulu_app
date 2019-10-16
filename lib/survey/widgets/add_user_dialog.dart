@@ -73,9 +73,6 @@ class _AddUserDialogState extends State<AddUserDialog> with WidgetsBindingObserv
                         autofocus: true,
                         onChanged: (value) => user.email = value,
                         keyboardType: TextInputType.emailAddress,
-                        validators: [
-                          FormBuilderValidators.required(),
-                        ],
                       ),
                       FormBuilderTextField(
                         attribute: "phone",
@@ -84,9 +81,6 @@ class _AddUserDialogState extends State<AddUserDialog> with WidgetsBindingObserv
                         autofocus: true,
                         onChanged: (value) => user.phone = value,
                         keyboardType: TextInputType.phone,
-                        validators: [
-                          FormBuilderValidators.required(),
-                        ],
                       ),
                     ]
                   )
@@ -128,7 +122,7 @@ class _AddUserDialogState extends State<AddUserDialog> with WidgetsBindingObserv
   
       var data = await _surveyRepository.addUser(id: id, form: user);
       print('add User: $data');
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     }
   }
   

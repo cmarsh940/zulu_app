@@ -127,20 +127,20 @@ Future<String> _asyncSimpleDialog(BuildContext context, String id, bool active, 
                   width: 0.0,
                   height: 0.0,
                 ),
-                SimpleDialogOption(
+                (!active) ? SimpleDialogOption(
                   onPressed: () {
                     Navigator.pop(context, 'open');
                   },
                   child: !active ? Text('Open survey', style: TextStyle(color: Theme.of(context).accentColor)) : SizedBox(
                     width: 0.0, height: 0.0),
-                ),
-                SimpleDialogOption(
+                ) : SizedBox(width: 0.0, height: 0.0),
+                (active) ? SimpleDialogOption(
                   onPressed: () {
                     Navigator.pop(context, 'close');
                   },
                   child: active ? Text('Close survey', style: TextStyle(color: Colors.red)) : SizedBox(
                     width: 0.0, height: 0.0),
-                ),
+                ) : SizedBox(width: 0.0, height: 0.0),
                 SimpleDialogOption(
                   onPressed: () {
                     Navigator.pop(context);

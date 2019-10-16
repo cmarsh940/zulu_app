@@ -223,8 +223,8 @@ class SurveyRepository {
     } else {
       TempUser _user = form;
       var name = _user.name;
-      var email = _user.email;
-      var phone = _user.phone;
+      var email = _user.email ?? '';
+      var phone = _user.phone ?? '';
       print('name: $name');
 
       var url = addUserURL + '$id';
