@@ -52,7 +52,7 @@ class UsersPage extends StatelessWidget {
             backgroundColor: Colors.blueAccent,
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (context) {
-                return AddPhoneContact();
+                return AddPhoneContact(surveyRepository: _surveyRepository, id: survey.id);
               }),
             ),
             label: 'Add Contact',

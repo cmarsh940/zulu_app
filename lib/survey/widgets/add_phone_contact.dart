@@ -1,11 +1,20 @@
 
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:project_z/data/repositories.dart';
+
+import 'add_user_dialog.dart';
 
 
 
 
 class AddPhoneContact extends StatefulWidget {
+  final String id;
+  final SurveyRepository _surveyRepository;
+
+  const AddPhoneContact({Key key, this.id, @required SurveyRepository surveyRepository,
+  }) : assert(surveyRepository != null),
+        _surveyRepository = surveyRepository, super(key: key);
 
   @override
   _AddPhoneContactState createState() => _AddPhoneContactState();
@@ -13,6 +22,9 @@ class AddPhoneContact extends StatefulWidget {
 
 class _AddPhoneContactState extends State<AddPhoneContact> {
   Iterable<Contact> _contacts;
+  String get id => widget.id;
+  SurveyRepository get _surveyRepository => widget._surveyRepository;
+  TempUser user = new TempUser();
 
   @override
   initState() {
@@ -69,13 +81,7 @@ class _AddPhoneContactState extends State<AddPhoneContact> {
             Contact c = _contacts?.elementAt(index);
             return ListTile(
               onTap: () {
-                print(c.givenName);
-                print(c.familyName);
-                print(c.emails.map((f) => f.value));
-                print(c.phones.map((f) => f.value));
-                // Navigator.of(context).push(MaterialPageRoute(
-                //     builder: (BuildContext context) =>
-                //         ContactDetailsPage(c)));
+                _submitContact(c);
               },
               leading: (c.avatar != null && c.avatar.length > 0)
                   ? CircleAvatar(backgroundImage: MemoryImage(c.avatar))
@@ -88,5 +94,23 @@ class _AddPhoneContactState extends State<AddPhoneContact> {
             : Center(child: CircularProgressIndicator(),),
       ),
     );
+  }
+
+  _submitContact(Contact contact) async {
+    print(contact.displayName);
+    print(contact.givenName);
+    print(contact.familyName);
+
+    var email = contact.emails.toList();
+    var newEmail = (email.isNotEmpty) ? email.elementAt(0).value : '';
+    var phone = contact.phones.toList();
+    var newPhone = (email.isNotEmpty) ? phone.elementAt(0).value.replaceAll(" ", "") : '';
+    var tempPhone = newPhone.replaceAll("-", "");
+    var temp2Phone = tempPhone.replaceAll("(", "");
+    var temp3Phone = temp2Phone.replaceAll(")", "");
+    var user = new TempUser(name: contact.displayName, email: newEmail, phone: temp3Phone);
+    var data = await _surveyRepository.addUser(id: id, form: user);
+    print('add User: $data');
+    Navigator.pop(context, true);
   }
 }
