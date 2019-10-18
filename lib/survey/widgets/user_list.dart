@@ -31,8 +31,6 @@ class _UserListState extends State<UserList> {
 
   @override
   initState() {
-    print(survey.name);
-    print(survey.users);
     setUsers();
     super.initState();
   }
@@ -81,21 +79,18 @@ class _UserListState extends State<UserList> {
 
   _removeUser(String id) async {
     List<Users> updatedUsers = await _surveyRepository.removeUser(id: id);
-    print('response is: $updatedUsers');
     setState(() {
       users = updatedUsers;
     });
   } 
 
   _updateUser(String id, TempUser user) async {
-    print('********** HIT UPDATE USER ************');
     List<Users> updatedUsers = await _surveyRepository.addUser(id: id, form: user);
     setState(() {
       users = updatedUsers;
     });
   }
   _updateOldUser(String id, TempUser user) async {
-    print('********** HIT UPDATE USER ************');
     List<Users> updatedUsers = await _surveyRepository.updateUser(id: id, form: user);
     setState(() {
       users = updatedUsers;

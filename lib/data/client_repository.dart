@@ -166,8 +166,6 @@ class ClientRepository {
         },
       );
       if (response.statusCode == 200) {
-        var data = response.body;
-        print('data returned is: $data');
         return true;
       } else {
         print('Error did not return 200');

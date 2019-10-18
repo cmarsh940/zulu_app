@@ -188,17 +188,12 @@ class SurveyRepository {
     @required String id,
     @required TempIncentive form,
   }) async {
-    // SharedPreferences pref = await SharedPreferences.getInstance();
-    // String _token = pref.getString("client_token");
-    // var id = data.id;
     if (id == null || form == null) {
       return null;
     } else {
       TempIncentive _incentive = form;
       var name = _incentive.name;
       var date = _incentive.date;
-      print('name: $name');
-      print('date: $date');
       var url = updateSurveyIncentiveURL + '$id';
       var response = await http.post(url, body: {'name': name, 'date': date});
       final int statusCode = response.statusCode;
@@ -206,7 +201,6 @@ class SurveyRepository {
       if (statusCode < 200 || statusCode > 400 || json == null) {
         throw new Exception("Error while fetching data");
       }
-      print('response: ${response.body}');
       return response.body;
     }
   }
@@ -215,9 +209,6 @@ class SurveyRepository {
     @required String id,
     @required TempUser form,
   }) async {
-    // SharedPreferences pref = await SharedPreferences.getInstance();
-    // String _token = pref.getString("client_token");
-    // var id = data.id;
     if (id == null || form == null) {
       return null;
     } else {
@@ -225,8 +216,6 @@ class SurveyRepository {
       var name = _user.name;
       var email = _user.email ?? '';
       var phone = _user.phone ?? '';
-      print('name: $name');
-
       var url = addUserURL + '$id';
       var response = await http.post(url, body: {'name': name, 'email': email, 'phone': phone});
       final int statusCode = response.statusCode;
@@ -234,7 +223,6 @@ class SurveyRepository {
       if (statusCode < 200 || statusCode > 400 || json == null) {
         throw new Exception("Error while fetching data");
       }
-      print('response: ${response.body}');
       List data = json.decode(response.body);
       var newData = data.map((m) => new Users.fromJson(m)).toList();
       return newData;
@@ -255,8 +243,6 @@ class SurveyRepository {
       var name = _user.name;
       var email = _user.email ?? '';
       var phone = _user.phone ?? '';
-      print('name: $name');
-
       var url = updateUserURL + '$id';
       var response = await http.put(url, body: {'name': name, 'email': email, 'phone': phone});
       final int statusCode = response.statusCode;
@@ -264,7 +250,6 @@ class SurveyRepository {
       if (statusCode < 200 || statusCode > 400 || json == null) {
         throw new Exception("Error while fetching data");
       }
-      print('response: ${response.body}');
       List data = json.decode(response.body);
       var newData = data.map((m) => new Users.fromJson(m)).toList();
       return newData;
@@ -287,7 +272,6 @@ class SurveyRepository {
       if (statusCode < 200 || statusCode > 400 || json == null) {
         throw new Exception("Error while fetching data");
       }
-      print('response: ${response.body}');
       List data = json.decode(response.body);
       var newData = data.map((m) => new Users.fromJson(m)).toList();
       return newData;
@@ -310,7 +294,6 @@ class SurveyRepository {
       if (statusCode < 200 || statusCode > 400 || json == null) {
         throw new Exception("Error while fetching data");
       }
-      print('response: ${response.body}');
       List data = json.decode(response.body);
       var newData = data.map((m) => new Users.fromJson(m)).toList();
       return newData;
@@ -349,37 +332,12 @@ class SurveyRepository {
         http.MultipartFile(name, stream, length, filename: basename(file.path));
     request.files.add(multipartFile);
     var response = await request.send();
-    print(response.statusCode);
     if (response.statusCode == 200) {
       return true;
     } else {
       return false;
     }
   }
-
-  // Future uploadLogo(String id, File image) async {
-  //   SharedPreferences pref = await SharedPreferences.getInstance();
-  //   String _token = pref.getString("client_token");
-  //   var url = uploadLogoURL + id;
-  //   var _body = image;
-  //   var response = await http.MultipartRequest("POST",
-  //     url,
-  //     body: _body, 
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       HttpHeaders.authorizationHeader: "Bearer $_token",
-  //     },
-  //   );
-  //   if (response.statusCode == 200) {
-  //     var data = int.parse(response.body);
-  //     pref.setInt('_count', data);
-
-  //     return data;
-  //   } else {
-  //     print('Error did not return 200');
-  //     return null;
-  //   }
-  // }
 
   Future saveSurvey(List<Survey> survey) {
     var newSurveys = survey.toString();

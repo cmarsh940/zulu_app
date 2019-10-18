@@ -98,10 +98,6 @@ class _AddPhoneContactState extends State<AddPhoneContact> {
   }
 
   _submitContact(Contact contact) async {
-    print(contact.displayName);
-    print(contact.givenName);
-    print(contact.familyName);
-
     var email = contact.emails.toList();
     var newEmail = (email.isNotEmpty) ? email.elementAt(0).value : '';
     var phone = contact.phones.toList();
@@ -111,8 +107,6 @@ class _AddPhoneContactState extends State<AddPhoneContact> {
     var temp3Phone = temp2Phone.replaceAll(")", "");
     var user = new TempUser(name: contact.displayName, email: newEmail, phone: temp3Phone);
     widget.onSave(user);
-    // var data = await _surveyRepository.addUser(id: id, form: user);
-    // print('add User: $data');
     Navigator.pop(context, true);
   }
 }

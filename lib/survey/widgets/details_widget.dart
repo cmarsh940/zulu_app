@@ -75,7 +75,6 @@ class _DetailsWidgetState extends State<DetailsWidget> {
             }
           });
         }
-        print('${q.questionType} new answers are: $tempAnswers');
         q.answers = tempAnswers;
       }
     }

@@ -53,7 +53,6 @@ class _SurveyListState extends State<SurveyList> {
   getSub() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     sub = pref.getString("_subscription");
-    print('in sub: $sub');
   }
 
   _launchTermsURL() async {
@@ -76,7 +75,6 @@ class _SurveyListState extends State<SurveyList> {
 
   Future getImage(String id) async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    print(image);
     var name = 'picture';
 
     if (image == null) {
@@ -374,7 +372,6 @@ Future _settingsDialog(BuildContext context) async {
                         setState(() {
                           rebuilt += 1;
                         });
-                        print('rebuilt $rebuilt times');
                         Completer<Null> completer = new Completer<Null>();
                         new Future.delayed(new Duration(seconds: 2)).then((_){
                           completer.complete();
