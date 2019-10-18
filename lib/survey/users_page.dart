@@ -22,43 +22,6 @@ class UsersPage extends StatelessWidget {
       body: Center(
         child: UserList(surveyRepository: _surveyRepository, survey: survey),
       ),
-      // floatingActionButton: SpeedDial(
-      //   heroTag: "addUser",
-      //   tooltip: 'Add User',
-      //   animatedIcon: AnimatedIcons.menu_close,
-      //   animatedIconTheme: IconThemeData(size: 22.0),
-      //   // child: Icon(Icons.add),
-      //   onOpen: () => print('OPENING DIAL'),
-      //   onClose: () => print('DIAL CLOSED'),
-      //   visible: dialVisible,
-      //   curve: Curves.bounceIn,
-      //   children: [
-      //     SpeedDialChild(
-      //       label: 'New User',
-      //       child: Icon(Icons.person_add, color: Colors.white),
-      //       backgroundColor: Colors.greenAccent,
-      //       onTap: () => Navigator.of(context).push(
-      //         MaterialPageRoute(builder: (context) {
-      //           return AddUserDialog(surveyRepository: _surveyRepository, id: survey.id);
-      //         }),
-      //       ),
-      //       labelStyle: TextStyle(fontWeight: FontWeight.w500),
-      //       labelBackgroundColor: Colors.greenAccent,
-      //     ),
-      //     SpeedDialChild(
-      //       child: Icon(Icons.contacts, color: Colors.white),
-      //       backgroundColor: Colors.blueAccent,
-      //       onTap: () => Navigator.of(context).push(
-      //         MaterialPageRoute(builder: (context) {
-      //           return AddPhoneContact(surveyRepository: _surveyRepository, id: survey.id);
-      //         }),
-      //       ),
-      //       label: 'Add Contact',
-      //       labelStyle: TextStyle(fontWeight: FontWeight.w500),
-      //       labelBackgroundColor: Colors.blueAccent,
-      //     ),
-      //   ],
-      // )
     );
   }
 }

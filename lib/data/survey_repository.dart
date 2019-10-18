@@ -240,6 +240,36 @@ class SurveyRepository {
       return newData;
     }
   }
+  
+  Future<dynamic> updateUser({
+    @required String id,
+    @required TempUser form,
+  }) async {
+    // SharedPreferences pref = await SharedPreferences.getInstance();
+    // String _token = pref.getString("client_token");
+    // var id = data.id;
+    if (id == null || form == null) {
+      return null;
+    } else {
+      TempUser _user = form;
+      var name = _user.name;
+      var email = _user.email ?? '';
+      var phone = _user.phone ?? '';
+      print('name: $name');
+
+      var url = updateUserURL + '$id';
+      var response = await http.put(url, body: {'name': name, 'email': email, 'phone': phone});
+      final int statusCode = response.statusCode;
+
+      if (statusCode < 200 || statusCode > 400 || json == null) {
+        throw new Exception("Error while fetching data");
+      }
+      print('response: ${response.body}');
+      List data = json.decode(response.body);
+      var newData = data.map((m) => new Users.fromJson(m)).toList();
+      return newData;
+    }
+  }
 
   Future<dynamic> removeUser({
     @required String id,

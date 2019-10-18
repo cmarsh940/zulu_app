@@ -21,6 +21,7 @@ const String openSurveyURL = host + "api/appsurveys/open/";
 const String updateSurveyURL = host + "api/appsurveys/";
 const String updateSurveyIncentiveURL = host + "api/appsurveys/incentive/";
 const String addUserURL = host + "api/appsurveys/user/";
+const String updateUserURL = host + "api/appsurveys/user/";
 const String deleteUserURL = host + "api/appsurveys/user/d/";
 const String getUsersURL = host + "api/appsurveys/user/";
 const String getQuestionTypesURL = host + "api/questionTypes";
