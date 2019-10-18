@@ -6,13 +6,14 @@ import 'package:project_z/data/repositories.dart';
 import 'add_user_dialog.dart';
 
 
-
+typedef OnSaveCallback = Function(TempUser user);
 
 class AddPhoneContact extends StatefulWidget {
   final String id;
   final SurveyRepository _surveyRepository;
+  final OnSaveCallback onSave;
 
-  const AddPhoneContact({Key key, this.id, @required SurveyRepository surveyRepository,
+  const AddPhoneContact({Key key, this.id, @required SurveyRepository surveyRepository, this.onSave,
   }) : assert(surveyRepository != null),
         _surveyRepository = surveyRepository, super(key: key);
 
@@ -109,8 +110,9 @@ class _AddPhoneContactState extends State<AddPhoneContact> {
     var temp2Phone = tempPhone.replaceAll("(", "");
     var temp3Phone = temp2Phone.replaceAll(")", "");
     var user = new TempUser(name: contact.displayName, email: newEmail, phone: temp3Phone);
-    var data = await _surveyRepository.addUser(id: id, form: user);
-    print('add User: $data');
+    widget.onSave(user);
+    // var data = await _surveyRepository.addUser(id: id, form: user);
+    // print('add User: $data');
     Navigator.pop(context, true);
   }
 }

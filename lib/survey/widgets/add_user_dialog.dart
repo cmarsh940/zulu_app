@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:native_widgets/native_widgets.dart';
 import 'package:project_z/data/repositories.dart';
+import 'package:project_z/models/survey.dart';
 
+typedef OnSaveCallback = Function(TempUser user);
 class AddUserDialog extends StatefulWidget {
   final String id;
   final SurveyRepository _surveyRepository;
+  final OnSaveCallback onSave;
 
-  const AddUserDialog({Key key, this.id, @required SurveyRepository surveyRepository,
+  const AddUserDialog({Key key, this.id, @required SurveyRepository surveyRepository, this.onSave,
   }) : assert(surveyRepository != null),
         _surveyRepository = surveyRepository, super(key: key);
 
@@ -20,6 +23,7 @@ class _AddUserDialogState extends State<AddUserDialog> with WidgetsBindingObserv
   String get id => widget.id;
   SurveyRepository get _surveyRepository => widget._surveyRepository;
   TempUser user = new TempUser();
+  Users tempU = new Users();
   
     @override
     void initState() {
@@ -119,9 +123,12 @@ class _AddUserDialogState extends State<AddUserDialog> with WidgetsBindingObserv
     }
    _submitForm() async {
       _fbKey.currentState.save();
-  
-      var data = await _surveyRepository.addUser(id: id, form: user);
-      print('add User: $data');
+      tempU.name = user.name;
+      tempU.email = user.email;
+      tempU.phone = user.phone;
+      widget.onSave(user);
+      // var data = await _surveyRepository.addUser(id: id, form: user);
+      // print('add User: $data');
       Navigator.pop(context, true);
     }
   }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/models/survey.dart';
+import 'package:project_z/survey/widgets/add_phone_contact.dart';
+import 'package:project_z/survey/widgets/add_user_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -23,6 +26,7 @@ class _UserListState extends State<UserList> {
   SurveyRepository get _surveyRepository => widget._surveyRepository;
   Survey get survey => widget.survey;
   Iterable<Users> users;
+  bool dialVisible = true;
 
 
   @override
@@ -81,7 +85,14 @@ class _UserListState extends State<UserList> {
     setState(() {
       users = updatedUsers;
     });
-    Navigator.pop(context);
+  } 
+
+  _updateUser(String id, TempUser user) async {
+    print('********** HIT UPDATE USER ************');
+    List<Users> updatedUsers = await _surveyRepository.addUser(id: id, form: user);
+    setState(() {
+      users = updatedUsers;
+    });
   }
   
   Future<String> _asyncSimpleDialog(BuildContext context, Users user) async {
@@ -170,6 +181,52 @@ class _UserListState extends State<UserList> {
           },
         ) : Center(child: Text('No users added'))
       ),
+      floatingActionButton: SpeedDial(
+        heroTag: "addUser",
+        tooltip: 'Add User',
+        animatedIcon: AnimatedIcons.menu_close,
+        animatedIconTheme: IconThemeData(size: 22.0),
+        // child: Icon(Icons.add),
+        onOpen: () => print('OPENING DIAL'),
+        onClose: () => print('DIAL CLOSED'),
+        visible: dialVisible,
+        curve: Curves.bounceIn,
+        children: [
+          SpeedDialChild(
+            label: 'New User',
+            child: Icon(Icons.person_add, color: Colors.white),
+            backgroundColor: Colors.greenAccent,
+            onTap: () =>  
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) {
+                  return AddUserDialog(surveyRepository: _surveyRepository, id: survey.id, onSave: (TempUser user) {
+                      _updateUser(survey.id, user);
+                    },
+                  );
+                }),
+              ),
+            //   _updateUser(survey.id)
+            // },
+            labelStyle: TextStyle(fontWeight: FontWeight.w500),
+            labelBackgroundColor: Colors.greenAccent,
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.contacts, color: Colors.white),
+            backgroundColor: Colors.blueAccent,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) {
+                return AddPhoneContact(surveyRepository: _surveyRepository, id: survey.id, onSave: (TempUser user) {
+                    _updateUser(survey.id, user);
+                  },
+                );
+              }),
+            ),
+            label: 'Add Contact',
+            labelStyle: TextStyle(fontWeight: FontWeight.w500),
+            labelBackgroundColor: Colors.blueAccent,
+          ),
+        ],
+      )
     );
   }
 }
