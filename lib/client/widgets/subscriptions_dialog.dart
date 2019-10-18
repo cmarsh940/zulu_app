@@ -303,7 +303,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
               PurchaseParam purchaseParam = PurchaseParam(
                   productDetails: productDetails,
                   applicationUserName: id,
-                  sandboxTesting: true);
+                  sandboxTesting: false);
               if (productDetails.id == _kConsumableId) {
                 _connection.buyConsumable(
                     purchaseParam: purchaseParam,
