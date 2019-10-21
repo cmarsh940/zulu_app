@@ -87,7 +87,7 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
 
   @override
   void dispose() { 
-    _addUpdateBloc.dispose();
+    _addUpdateBloc.close();
     super.dispose();
   }
 
@@ -519,7 +519,7 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
     // widget.onSave(survey);
     dynamic data = {'id': id,'survey': survey, 'questions': questions};
 
-    _addUpdateBloc.dispatch(
+    _addUpdateBloc.add(
       AddButtonPressed(
         data      
       ),

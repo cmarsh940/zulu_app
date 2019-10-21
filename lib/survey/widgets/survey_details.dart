@@ -27,13 +27,13 @@ class _SurveyDetailsState extends State<SurveyDetails> {
   @override
   void initState() {
     id = widget.id;
-    _surveyDetailBloc = SurveyDetailBloc(surveyRepository: _surveyRepository)..dispatch(RetrieveSurveyById(id));
+    _surveyDetailBloc = SurveyDetailBloc(surveyRepository: _surveyRepository)..add(RetrieveSurveyById(id));
     super.initState();
   }
 
   @override
   void dispose() { 
-    _surveyDetailBloc.dispose();
+    _surveyDetailBloc.close();
     super.dispose();
   }
 

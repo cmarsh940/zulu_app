@@ -23,15 +23,15 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     if (event is LoadSurvey) {
       yield* _mapLoadSurveyToState();
     } else if (event is CloseSurvey) {
-      yield* _mapCloseSurveyToState(currentState, event);
+      yield* _mapCloseSurveyToState(event);
     } else if (event is OpenSurvey) {
-      yield* _mapOpenSurveyToState(currentState, event);
+      yield* _mapOpenSurveyToState(event);
     } else if (event is AddSurvey) {
-      yield* _mapAddSurveyToState(currentState, event);
+      yield* _mapAddSurveyToState(event);
     } else if (event is UpdateSurvey) {
-      yield* _mapUpdateSurveyToState(currentState, event);
+      yield* _mapUpdateSurveyToState(event);
     } else if (event is DeleteSurvey) {
-      yield* _mapDeleteSurveyToState(currentState, event);
+      yield* _mapDeleteSurveyToState(event);
     } else if (event is Refresh) {
       yield* _mapLoadSurveyToState();
     }
@@ -59,7 +59,6 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   }
 
   Stream<SurveyState> _mapCloseSurveyToState(
-    SurveyState currentState,
     CloseSurvey event,
   ) async* {
     try {
@@ -77,7 +76,6 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     }
   }
   Stream<SurveyState> _mapOpenSurveyToState(
-    SurveyState currentState,
     OpenSurvey event,
   ) async* {
     try {
@@ -94,11 +92,10 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   }
 
   Stream<SurveyState> _mapAddSurveyToState(
-    SurveyState currentState,
     AddSurvey event,
   ) async* {
-    if (currentState is SurveyLoaded) {
-      final List<Survey> updatedSurvey = List.from(currentState.survey)
+    if (state is SurveyLoaded) {
+      final List<Survey> updatedSurvey = List.from((state as SurveyLoaded).survey)
         ..add(event.survey);
       yield SurveyLoaded(updatedSurvey);
       _saveSurvey(updatedSurvey);
@@ -106,11 +103,10 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   }
 
   Stream<SurveyState> _mapUpdateSurveyToState(
-    SurveyState currentState,
     UpdateSurvey event,
   ) async* {
-    if (currentState is SurveyLoaded) {
-      final List<Survey> updatedSurvey = currentState.survey.map((survey) {
+    if (state is SurveyLoaded) {
+      final List<Survey> updatedSurvey = (state as SurveyLoaded).survey.map((survey) {
         return survey.id == event.updatedSurvey.id ? event.updatedSurvey : survey;
       }).toList();
       yield SurveyLoaded(updatedSurvey);
@@ -119,12 +115,13 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   }
 
   Stream<SurveyState> _mapDeleteSurveyToState(
-    SurveyState currentState,
     DeleteSurvey event,
   ) async* {
-    if (currentState is SurveyLoaded) {
-      final updatedSurvey =
-          currentState.survey.where((survey) => survey.id != event.survey.id).toList();
+    if (state is SurveyLoaded) {
+      final updatedSurvey = (state as SurveyLoaded)
+          .survey
+          .where((survey) => survey.id != event.survey.id)
+          .toList();
       yield SurveyLoaded(updatedSurvey);
       _saveSurvey(updatedSurvey);
     }

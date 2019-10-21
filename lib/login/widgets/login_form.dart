@@ -88,7 +88,7 @@ class _LoginFormState extends State<LoginForm> {
             );
         }
         if (state.isSuccess) {
-          BlocProvider.of<AuthenticationBloc>(context).dispatch(LoggedIn());
+          BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
         }
       },
       child: BlocBuilder(
@@ -187,19 +187,19 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void _onEmailChanged() {
-    _loginBloc.dispatch(
+    _loginBloc.add(
       EmailChanged(email: _emailController.text),
     );
   }
 
   void _onPasswordChanged() {
-    _loginBloc.dispatch(
+    _loginBloc.add(
       PasswordChanged(password: _passwordController.text),
     );
   }
 
   void _onFormSubmitted() {
-    _loginBloc.dispatch(
+    _loginBloc.add(
       LoginButtonPressed(
         email: _emailController.text,
         password: _passwordController.text,
@@ -219,7 +219,7 @@ class _LoginFormState extends State<LoginForm> {
        } else {
          var email = _googleSignIn.currentUser.email;
          var password = 'Google' + _googleSignIn.currentUser.id;
-         _loginBloc.dispatch(
+         _loginBloc.add(
            LoginButtonPressed(
              email: email,
              password: password,
@@ -256,7 +256,7 @@ class _LoginFormState extends State<LoginForm> {
           }
         }
         var password = 'Facebook' + id;
-        _loginBloc.dispatch(
+        _loginBloc.add(
           LoginButtonPressed(
             email: email,
             password: password,

@@ -76,7 +76,7 @@ class _EditSurveyFormState extends State<EditSurveyForm> {
 
   @override
   void dispose() { 
-    _addUpdateBloc.dispose();
+    _addUpdateBloc.close();
     super.dispose();
   }
 
@@ -468,7 +468,7 @@ class _EditSurveyFormState extends State<EditSurveyForm> {
   _submitForm(Survey survey) async {
     _fbKey.currentState.save();
     widget.onSave(survey);
-    _addUpdateBloc.dispatch(
+    _addUpdateBloc.add(
       SubmissionButtonPressed(
         survey: survey
       ),

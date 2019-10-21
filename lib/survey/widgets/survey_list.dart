@@ -39,14 +39,14 @@ class _SurveyListState extends State<SurveyList> {
   void initState() {
     getSub();
     rebuilt = 0;
-    _surveyBloc = SurveyBloc(surveyRepository: _surveyRepository)..dispatch(LoadSurvey());
+    _surveyBloc = SurveyBloc(surveyRepository: _surveyRepository)..add(LoadSurvey());
     super.initState();
     _refreshCompleter = Completer<void>();
   }
 
   @override
   void dispose() { 
-    _surveyBloc.dispose();
+    _surveyBloc.close();
     super.dispose();
   }
 
@@ -174,7 +174,7 @@ Future _settingsDialog(BuildContext context) async {
                       ),
                     ),
                     onPressed: () {
-                      BlocProvider.of<AuthenticationBloc>(context).dispatch(
+                      BlocProvider.of<AuthenticationBloc>(context).add(
                         Profile(),
                       );
                       Navigator.pop(context);
@@ -225,7 +225,7 @@ Future _settingsDialog(BuildContext context) async {
                       ),
                     ),
                     onPressed: () {
-                      BlocProvider.of<AuthenticationBloc>(context).dispatch(
+                      BlocProvider.of<AuthenticationBloc>(context).add(
                         LoggedOut(),
                       );
                       Navigator.pop(context);
@@ -366,7 +366,7 @@ Future _settingsDialog(BuildContext context) async {
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: () {
-                        _surveyBloc.dispatch(
+                        _surveyBloc.add(
                           Refresh(),
                         );
                         setState(() {
@@ -430,11 +430,11 @@ Future _settingsDialog(BuildContext context) async {
   }
 
   void _closeSurvey(String id) {
-    _surveyBloc.dispatch(CloseSurvey(id));
+    _surveyBloc.add(CloseSurvey(id));
   }
 
   void _openSurvey(String id) {
-    _surveyBloc.dispatch(OpenSurvey(id));
+    _surveyBloc.add(OpenSurvey(id));
   }
   
 }

@@ -26,7 +26,7 @@ class ProfilePage extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           tooltip: 'Back',
-          onPressed: () => BlocProvider.of<AuthenticationBloc>(context).dispatch(LoggedIn()),
+          onPressed: () => BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn()),
           ),
         title: Text('Profile'),
         centerTitle: true,

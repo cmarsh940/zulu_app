@@ -14,7 +14,7 @@ dependencies:
   contacts_service: ^0.3.4
   cupertino_icons: ^0.1.2
   equatable: ^0.4.0
-  flutter_bloc: ^0.21.0
+  flutter_bloc: ^1.0.0
   flutter_facebook_login: ^3.0.0
   flutter_form_builder: ^3.4.1
   flutter_speed_dial: ^1.2.1
