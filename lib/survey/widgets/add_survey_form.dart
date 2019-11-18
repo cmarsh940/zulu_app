@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/models/survey.dart';
 
@@ -49,6 +50,9 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
     {"value": "dateWeekday", "viewValue": "Weekday Calendar (Monday-Friday)"},
     {"value": "dropDown", "viewValue": "Drop Down (Single answer)"},
     {"value": "dropDownMultiple", "viewValue": "Drop Down (Multiple answer)"},
+    {"value": "images", "viewValue": "4 Option Images"},
+    {"value": "imageText", "viewValue": "1 Image (Open answer)"},
+    {"value": "imageOptions", "viewValue": "1 Image (Multiple options)"},
     {"value": "multiplechoice", "viewValue": "Multiple Choice (Single answer)"},
     {"value": "rate", "viewValue": "Slide Rating (1-5)"},
     {"value": "star", "viewValue": "Star Rating"},
@@ -89,6 +93,17 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
   void dispose() { 
     _addUpdateBloc.close();
     super.dispose();
+  }
+
+  Future<String> postImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var name = 'picture';
+    if (image != null) {
+      // await _surveyRepository.uploadQuestionPicture(image, name);
+      return image.path;
+    } else {
+      return '';
+    }
   }
 
   void getCategories() async {
@@ -250,6 +265,12 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
                                         FormBuilderValidators.required(),
                                       ],
                                       onChanged: (value) => questions[i].question = value,
+                                    ),
+                                    Center(
+                                      child: (questions[i].questionType == 'images' || questions[i].questionType == 'imageText' || questions[i].questionType == 'imageOptions')
+                                      ? Center(
+                                        child: Text('** Please use our web platform for this function.', style: TextStyle(color: Colors.red),)
+                                      ) : SizedBox(),
                                     ),
                                     Center(
                                       child: (questions[i].questionType == 'dateStartEnd')
@@ -530,13 +551,15 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
 class Question {
   String questionType;
   String question;
+  String image;
   List<NewOptions> options;
 
-  Question({this.questionType, this.question, this.options});
+  Question({this.questionType, this.question, this.image, this.options});
 
   Question.fromJson(Map<String, dynamic> json) {
     questionType = json['questionType'];
     question = json['question'];
+    image = json['image'];
     if (json['options'] != null) {
       options = new List<NewOptions>();
       json['options'].forEach((v) {
@@ -549,6 +572,7 @@ class Question {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['questionType'] = this.questionType;
     data['question'] = this.question;
+    data['image'] = this.image;
     if (this.options != null) {
       data['options'] = this.options.map((v) => v.toJson()).toList();
     }

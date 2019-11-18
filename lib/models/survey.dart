@@ -127,6 +127,7 @@ class Survey {
 
 class Questions {
   List<dynamic> answers;
+  String image;
   bool isRequired;
   String sId;
   String questionType;
@@ -140,6 +141,7 @@ class Questions {
 
   Questions(
       {this.answers,
+      this.image,
       this.isRequired,
       this.sId,
       this.questionType,
@@ -153,6 +155,7 @@ class Questions {
 
   Questions.fromJson(Map<String, dynamic> json) {
     answers = json['answers'];
+    image = json['image'];
     isRequired = json['isRequired'];
     sId = json['_id'];
     questionType = json['questionType'];
@@ -173,6 +176,7 @@ class Questions {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['answers'] = this.answers;
+    data['image'] = this.image;
     data['isRequired'] = this.isRequired;
     data['_id'] = this.sId;
     data['questionType'] = this.questionType;

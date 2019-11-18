@@ -56,6 +56,20 @@
             ]
         },
         {
+            "name": "Images",
+            "group": [
+                { 
+                    "value": "imageText", "viewValue": "1 Image (Open answer)"
+                },
+                { 
+                    "value": "imageOptions", "viewValue": "1 Image (Multiple options)"
+                },
+                { 
+                    "value": "images", "viewValue": "4 Option Images"
+                }
+            ]
+        },
+        {
             "name": "Multiple Choice",
             "group": [
                 { 

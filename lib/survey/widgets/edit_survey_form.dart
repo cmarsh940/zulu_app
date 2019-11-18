@@ -219,6 +219,12 @@ class _EditSurveyFormState extends State<EditSurveyForm> {
                                       initialValue: survey.questions[i].question,
                                       onChanged: (value) => survey.questions[i].question = value,
                                     ),
+                                    Center(
+                                      child: (survey.questions[i].questionType == 'images' || survey.questions[i].questionType == 'imageText' || survey.questions[i].questionType == 'imageOptions')
+                                      ? Center(
+                                        child: Text('** Please use our web platform for this function.', style: TextStyle(color: Colors.red),)
+                                      ) : SizedBox(),
+                                    ),
 
                                     Center(
                                       child: (survey.questions[i].questionType == 'dateStartEnd')

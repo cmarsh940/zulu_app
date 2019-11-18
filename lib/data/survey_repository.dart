@@ -338,6 +338,23 @@ class SurveyRepository {
       return false;
     }
   }
+  Future uploadQuestionPicture(File file, String name) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String id = pref.getString("client_id");
+    var stream = http.ByteStream(DelegatingStream.typed(file.openRead()));
+    var length = await file.length();
+    var uri = Uri.parse(uploadQuestionPictureURL + id);
+    var request = http.MultipartRequest("POST", uri);
+    var multipartFile =
+        http.MultipartFile(name, stream, length, filename: basename(file.path));
+    request.files.add(multipartFile);
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   Future saveSurvey(List<Survey> survey) {
     var newSurveys = survey.toString();
