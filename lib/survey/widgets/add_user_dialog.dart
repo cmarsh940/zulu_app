@@ -7,14 +7,14 @@ import 'package:project_z/models/survey.dart';
 typedef OnSaveCallback = Function(TempUser user);
 class AddUserDialog extends StatefulWidget {
   final String id;
-  final SurveyRepository _surveyRepository;
+  final SurveyRepository surveyRepository;
   final bool isEditing;
   final Users tempUser;
   final OnSaveCallback onSave;
 
   const AddUserDialog({Key key, this.id, @required SurveyRepository surveyRepository, this.onSave, this.tempUser, this.isEditing,
   }) : assert(surveyRepository != null),
-        _surveyRepository = surveyRepository, super(key: key);
+        surveyRepository = surveyRepository, super(key: key);
 
   @override
   _AddUserDialogState createState() => _AddUserDialogState();
@@ -25,7 +25,7 @@ class _AddUserDialogState extends State<AddUserDialog> with WidgetsBindingObserv
   String get id => widget.id;
   bool get isEditing => widget.isEditing;
   Users get tempUser => widget.tempUser;
-  SurveyRepository get _surveyRepository => widget._surveyRepository;
+  SurveyRepository get surveyRepository => widget.surveyRepository;
   TempUser user = new TempUser();
   
     @override

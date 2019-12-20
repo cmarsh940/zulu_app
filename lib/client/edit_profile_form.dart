@@ -14,13 +14,13 @@ typedef OnSaveCallback = Function(ClientModel client);
 class EditProfileForm extends StatefulWidget {
   final ClientModel client;
   final OnSaveCallback onSave;
-  final ClientRepository _clientRepository;
+  final ClientRepository clientRepository;
 
   EditProfileForm({
     Key key,
     this.client, @required this.onSave, @required ClientRepository clientRepository,
   }) : assert(clientRepository != null),
-        _clientRepository = clientRepository, super(key: key);
+        clientRepository = clientRepository, super(key: key);
 
   @override
   _EditProfileFormState createState() => _EditProfileFormState();
@@ -30,7 +30,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   ProfileBloc _profileBloc;
   ClientModel get client => widget.client;
-  ClientRepository get _clientRepository => widget._clientRepository;
+  ClientRepository get clientRepository => widget.clientRepository;
   
   bool rebuild;  
 

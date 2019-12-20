@@ -115,11 +115,13 @@ class ClientRepository {
     return ;
   }
 
-  Future<void> signUp({String email, String password}) async {
-  // return await _firebaseAuth.createUserWithEmailAndPassword(
-  //   email: email,
-  //   password: password,
-  // );
+  Future<void> signUp({String firstName, String lastName, email, String password}) async {
+    var response = await http.post(registerURL, body: {'firstName': firstName, 'lastName': lastName,'email': email, 'password': password});
+    if (response.statusCode == 200) {
+      print('response is: ${response.body}');
+    } else {
+      return null;
+    }
   }
 
   Future updateClient(ClientModel client) async {

@@ -11,17 +11,18 @@ import 'package:project_z/utils/popUp.dart';
 
 
 import '../login.dart';
+import 'create_account_button.dart';
 import 'login_button.dart';
 
 // FacebookLogin _facebookLogin = FacebookLogin();
 
  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
 class LoginForm extends StatefulWidget {
-  final ClientRepository _clientRepository;
+  final ClientRepository clientRepository;
 
   LoginForm({Key key, @required ClientRepository clientRepository})
       : assert(clientRepository != null),
-        _clientRepository = clientRepository,
+        clientRepository = clientRepository,
         super(key: key);
 
 
@@ -36,7 +37,7 @@ class _LoginFormState extends State<LoginForm> {
 
   LoginBloc _loginBloc;
 
-  ClientRepository get _clientRepository => widget._clientRepository;
+  ClientRepository get clientRepository => widget.clientRepository;
 
   bool get isPopulated =>
       _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
@@ -165,7 +166,8 @@ class _LoginFormState extends State<LoginForm> {
                                 },
                               )
                             ],
-                          )
+                          ),
+                          CreateAccountButton(clientRepository: clientRepository),
                         ],
                       ),
                     ),

@@ -10,12 +10,12 @@ typedef OnSaveCallback = Function(TempUser user);
 
 class AddPhoneContact extends StatefulWidget {
   final String id;
-  final SurveyRepository _surveyRepository;
+  final SurveyRepository surveyRepository;
   final OnSaveCallback onSave;
 
   const AddPhoneContact({Key key, this.id, @required SurveyRepository surveyRepository, this.onSave,
   }) : assert(surveyRepository != null),
-        _surveyRepository = surveyRepository, super(key: key);
+        surveyRepository = surveyRepository, super(key: key);
 
   @override
   _AddPhoneContactState createState() => _AddPhoneContactState();
@@ -24,7 +24,7 @@ class AddPhoneContact extends StatefulWidget {
 class _AddPhoneContactState extends State<AddPhoneContact> {
   Iterable<Contact> _contacts;
   String get id => widget.id;
-  SurveyRepository get _surveyRepository => widget._surveyRepository;
+  SurveyRepository get surveyRepository => widget.surveyRepository;
   TempUser user = new TempUser();
 
   @override

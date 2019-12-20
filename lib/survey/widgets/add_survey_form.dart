@@ -97,7 +97,7 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
 
   Future<String> postImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    var name = 'picture';
+    // var name = 'picture';
     if (image != null) {
       // await _surveyRepository.uploadQuestionPicture(image, name);
       return image.path;
