@@ -108,17 +108,17 @@ class ClientRepository {
 
   Future<void> signOut() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    // pref.remove("client_token");
-    // pref.remove("is_login");
-    // pref.remove("_categories");
     pref.clear();
     return ;
   }
 
-  Future<void> signUp({String firstName, String lastName, email, String password}) async {
+  Future signUp({String firstName, String lastName, email, String password}) async {
     var response = await http.post(registerURL, body: {'firstName': firstName, 'lastName': lastName,'email': email, 'password': password});
     if (response.statusCode == 200) {
       print('response is: ${response.body}');
+    
+      authenticate(email: email, password: password);
+      return true;
     } else {
       return null;
     }

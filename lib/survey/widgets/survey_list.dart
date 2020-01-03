@@ -378,7 +378,11 @@ Future _settingsDialog(BuildContext context) async {
                         });
                         return completer.future;
                       },
-                      child: ListView.separated(
+                      child: (survey.length < 1) ? Text(
+                            'No Surveys',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                        ) : ListView.separated(
                         itemCount: survey.length,
                         itemBuilder: (context, i) {
                           Survey surveys = survey[i];
