@@ -216,15 +216,23 @@ class _LoginFormState extends State<LoginForm> {
        });
        if (googleUser == null) {
          var title = 'Google Signin Error';
-         var message = 'There was a problem signing into goolgle.';
+         var message = 'There was a problem signing into google.';
          showAlertPopup(context, title, message);
        } else {
+         var name = _googleSignIn.currentUser.displayName.split(' ');
+         print('name is: $name');
+         var firstName = name[0];
+         print('firstName is: $firstName');
+         var lastName = name[1];
+         print('lastName is: $lastName');
          var email = _googleSignIn.currentUser.email;
          var password = 'Google' + _googleSignIn.currentUser.id;
          _loginBloc.add(
-           LoginButtonPressed(
+           GoogleLoginButtonPressed(
              email: email,
              password: password,
+             firstName: firstName,
+             lastName: lastName
            ),
          );
        }

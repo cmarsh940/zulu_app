@@ -9,6 +9,7 @@ enum AlertAction {
 const host = 'http://127.0.0.1:8000/';
 
 const String loginURL = host + "api/clients/applogin";
+const String googleLoginURL = host + "api/clients/appgooglelogin";
 const String registerURL = host + "api/clients/appregister";
 const String getCategoriesURL = host + "api/survey-categories";
 const String getClientURL = host + "api/appclients/";

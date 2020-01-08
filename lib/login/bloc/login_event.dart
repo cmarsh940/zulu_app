@@ -19,6 +19,24 @@ class LoginButtonPressed extends LoginEvent {
       'LoginButtonPressed { email: $email, password: $password }';
 }
 
+class GoogleLoginButtonPressed extends LoginEvent {
+  final String email;
+  final String password;
+  final String firstName;
+  final String lastName;
+
+  GoogleLoginButtonPressed({
+    @required this.email,
+    @required this.password,
+    @required this.firstName,
+    @required this.lastName,
+  }) : super([email, password, firstName,lastName]);
+
+  @override
+  String toString() =>
+      'GoogleLoginButtonPressed { email: $email, password: $password, fistName: $firstName, lastName: $lastName }';
+}
+
 class EmailChanged extends LoginEvent {
   final String email;
 
