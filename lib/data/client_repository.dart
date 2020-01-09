@@ -83,6 +83,39 @@ class ClientRepository {
     }
   }
 
+  Future<ClientModel> facebookAuthenticate({
+    @required String email,
+    @required String password,
+    @required String firstName,
+    @required String lastName,
+  }) async {
+    var response = await http.post(facebookLoginURL, body: {'email': email, 'password': password, 'firstName': firstName, 'lastName': lastName});
+    if (response.statusCode == 200) {
+      Map clientMap = jsonDecode(response.body);
+      final ClientModel _client = new ClientModel.fromJson(clientMap);
+      if (_client.id == null) {
+        print('CLIENT ID IS NULL');
+        return null;
+      } else {
+        final _token = _client.token;
+        final _id = _client.id;
+        final _count = _client.surveyCount;
+        final _subscription = _client.subscription;
+
+        SharedPreferences.getInstance().then((prefs) {
+          prefs.setString("client_token", _token);
+          prefs.setString("client_id", _id);
+          prefs.setBool("is_login", true);
+          prefs.setInt("_count", _count);
+          prefs.setString("_subscription", _subscription);
+        });
+        return _client;
+      }
+    } else {
+      return null;
+    }
+  }
+
 
   Future<CategoryApi> getCategory() async {
     var url = getCategoriesURL;

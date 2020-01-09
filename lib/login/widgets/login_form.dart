@@ -247,6 +247,9 @@ class _LoginFormState extends State<LoginForm> {
   Future<void> _handleFacebookSignIn() async {
     String email;
     String id;
+    String firstName;
+    String lastName;
+
     final FacebookLoginResult result =
         await facebookSignIn.logIn(['email']);
 
@@ -264,12 +267,20 @@ class _LoginFormState extends State<LoginForm> {
           else if (a.key == 'id') {
             id = a.value.toString();
           }
+          else if (a.key == 'first_name') {
+            firstName = a.value.toString();
+          }
+          else if (a.key == 'last_name') {
+            lastName = a.value.toString();
+          }
         }
         var password = 'Facebook' + id;
         _loginBloc.add(
-          LoginButtonPressed(
+          FacebookLoginButtonPressed(
             email: email,
             password: password,
+            firstName: firstName,
+            lastName: lastName,
           ),
         );
         break;
