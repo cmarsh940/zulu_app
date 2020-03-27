@@ -34,6 +34,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-8766159028719488~8922770650</string>
 	<key>FacebookAppID</key>
 	<string>399906560790007</string>
 	<key>FacebookDisplayName</key>

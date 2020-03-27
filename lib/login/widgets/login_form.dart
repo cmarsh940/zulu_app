@@ -1,18 +1,22 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
- import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:project_z/auth/authentication.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/utils/popUp.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 
 import '../login.dart';
 import 'create_account_button.dart';
 import 'login_button.dart';
+
+const APP_ID = "<Put in your Device ID>";
 
 // FacebookLogin _facebookLogin = FacebookLogin();
 
@@ -46,6 +50,28 @@ class _LoginFormState extends State<LoginForm> {
     return state.isFormValid && isPopulated && !state.isSubmitting;
   }
 
+  static final MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    testDevices: APP_ID != null ? [APP_ID] : null,
+    keywords: ['Business', 'Surveys', 'Polls', 'Small Business'],
+  );
+
+  BannerAd bannerAd;
+
+  String androidAds = 'ca-app-pub-8766159028719488/3266963766';
+  String iosAds = 'ca-app-pub-8766159028719488/6887989474';
+  String androidId = 'ca-app-pub-8766159028719488~2145453783';
+  String iosId = 'ca-app-pub-8766159028719488~8922770650';
+
+  BannerAd buildBanner() {
+    return BannerAd(
+        adUnitId: Platform.isIOS? iosAds : androidAds,
+        size: AdSize.smartBanner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print(event);
+        });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -53,10 +79,14 @@ class _LoginFormState extends State<LoginForm> {
     _loginBloc = BlocProvider.of<LoginBloc>(context);
     _emailController.addListener(_onEmailChanged);
     _passwordController.addListener(_onPasswordChanged);
+
+    FirebaseAdMob.instance.initialize(appId: Platform.isIOS ? iosId : androidId);
+    bannerAd = buildBanner()..load();
   }
 
   @override
   Widget build(BuildContext context) {
+    bannerAd..show();
     return BlocListener(
       bloc: _loginBloc,
       listener: (BuildContext context, LoginState state) {
@@ -104,7 +134,7 @@ class _LoginFormState extends State<LoginForm> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Image.asset('assets/images/splashLogo.png', height: 300),
+                      child: Image.asset('assets/images/splashLogo.png', height: 200),
                     ),
                     TextFormField(
                       controller: _emailController,
@@ -183,6 +213,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   void dispose() {
+    bannerAd?.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
