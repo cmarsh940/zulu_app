@@ -261,7 +261,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       return Card();
     }
     ListTile productHeader = ListTile(
-      title: Text('Subscriptions', style: Theme.of(context).textTheme.headline),
+      title: Text('Subscriptions', style: Theme.of(context).textTheme.headline5),
       subtitle: Text('** Note: Unless specified as annual, all subscriptions are a 1 month auto renewal basis. If specified as annual the subscription is a 1 year auto renewal. All subscriptions can be canceled at any time.', style:  Theme.of(context).textTheme.caption)
     );
     List<ListTile> productList = <ListTile>[];

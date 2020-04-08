@@ -8,10 +8,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:project_z/auth/authentication.dart';
 import 'package:project_z/data/repositories.dart';
+import 'package:project_z/utils/jwt-payload-parse.dart';
 import 'package:project_z/utils/popUp.dart';
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:apple_sign_in/apple_sign_in.dart';
 
-
+import '../../constants.dart';
 import '../login.dart';
 import 'create_account_button.dart';
 import 'login_button.dart';
@@ -57,10 +59,6 @@ class _LoginFormState extends State<LoginForm> {
 
   BannerAd bannerAd;
 
-  String androidAds = 'ca-app-pub-8766159028719488/3266963766';
-  String iosAds = 'ca-app-pub-8766159028719488/6887989474';
-  String androidId = 'ca-app-pub-8766159028719488~2145453783';
-  String iosId = 'ca-app-pub-8766159028719488~8922770650';
 
   BannerAd buildBanner() {
     return BannerAd(
@@ -82,6 +80,10 @@ class _LoginFormState extends State<LoginForm> {
 
     FirebaseAdMob.instance.initialize(appId: Platform.isIOS ? iosId : androidId);
     bannerAd = buildBanner()..load();
+
+    AppleSignIn.onCredentialRevoked.listen((_) {
+      print("Credentials revoked");
+    });
   }
 
   @override
@@ -174,9 +176,25 @@ class _LoginFormState extends State<LoginForm> {
                                 ? _onFormSubmitted
                                 : null,
                           ),
+                          (Platform.isIOS) ? 
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                AppleSignInButton(
+                                  onPressed: () {
+                                    _handleAppleSignIn();
+                                  },
+                                ),
+                              ]
+                            ) : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                              ]
+                            ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
+                              
                                IconButton(
                                  icon: Image.asset(
                                    'assets/icons/loginWithGoogle.png',
@@ -240,6 +258,33 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
+  Future<void> _handleAppleSignIn() async {
+    final AuthorizationResult result = await AppleSignIn.performRequests([
+      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+    ]);
+
+    if (result.status == AuthorizationStatus.authorized) {
+      var appleUser = parseJwt(utf8.decode(result.credential.identityToken));
+      var firstName = result.credential.fullName.givenName;
+      var lastName = result.credential.fullName.familyName;
+      var email = (result.credential.email == null) ? appleUser['email'] : result.credential.email;
+      var password = (result.credential.email == null) ? 'Apple' + appleUser['email'] : 'Apple' + result.credential.email;
+        
+      _loginBloc.add(
+        AppleLoginButtonPressed(
+          email: email,
+          password: password,
+          firstName: firstName,
+          lastName: lastName
+        ),
+      );
+    } else {
+      var title = 'Apple Signin Error';
+      var message = 'There was a problem signing with apple.';
+      showAlertPopup(context, title, message);
+    }
+  }
+
    Future<void> _handleGoogleSignIn() async {
      try {
        final GoogleSignInAccount googleUser = await _googleSignIn.signIn().catchError((onError) {
@@ -251,11 +296,8 @@ class _LoginFormState extends State<LoginForm> {
          showAlertPopup(context, title, message);
        } else {
          var name = _googleSignIn.currentUser.displayName.split(' ');
-         print('name is: $name');
          var firstName = name[0];
-         print('firstName is: $firstName');
          var lastName = name[1];
-         print('lastName is: $lastName');
          var email = _googleSignIn.currentUser.email;
          var password = 'Google' + _googleSignIn.currentUser.id;
          _loginBloc.add(
@@ -268,7 +310,6 @@ class _LoginFormState extends State<LoginForm> {
          );
        }
      } catch (error) {
-       print('google signin error');
        var title = 'Google Signin Error';
        var message = error;
        showAlertPopup(context, title, message);

@@ -47,6 +47,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         email: event.email,
         password: event.password,
       );
+    } else if (event is AppleLoginButtonPressed) {
+      yield* _mapLoginWithAppleCredentialsPressedToState(
+        email: event.email,
+        password: event.password,
+        firstName: event.firstName,
+        lastName: event.lastName,
+      );
     } else if (event is GoogleLoginButtonPressed) {
       yield* _mapLoginWithGoogleCredentialsPressedToState(
         email: event.email,
@@ -92,6 +99,29 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } else {
       yield LoginState.failure();
     }
+  }
+
+  Stream<LoginState> _mapLoginWithAppleCredentialsPressedToState({
+    String email,
+    String password,
+    String firstName,
+    String lastName,
+  }) async* {
+    yield LoginState.loading();
+    
+    var response =  await _clientRepository.appleAuthenticate(
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+    );
+
+    if (response != null) {
+      yield LoginState.success();
+    } else {
+      yield LoginState.failure();
+    }
+
   }
 
   Stream<LoginState> _mapLoginWithGoogleCredentialsPressedToState({
