@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'consumable_store.dart';
 
@@ -101,14 +100,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
     }
   }
 
-  _launchPriceURL() async {
-    const url = 'https://surveyzulu.com/app_pricing';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+
 
   Future<void> initStoreInfo() async {
     final bool isAvailable = await _connection.isAvailable();
@@ -269,7 +261,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
       return Card();
     }
     ListTile productHeader = ListTile(
-      title: Text('Subscriptions', style: Theme.of(context).textTheme.headline),
+      title: Text('Subscriptions', style: Theme.of(context).textTheme.headline5),
       subtitle: Text('** Note: Unless specified as annual, all subscriptions are a 1 month auto renewal basis. If specified as annual the subscription is a 1 year auto renewal. All subscriptions can be canceled at any time.', style:  Theme.of(context).textTheme.caption)
     );
     List<ListTile> productList = <ListTile>[];
@@ -291,7 +283,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
 
 
     productList.addAll(_products.map((ProductDetails productDetails) {
-      PurchaseDetails previousPurchase = purchases[productDetails.id];
+//      PurchaseDetails previousPurchase = purchases[productDetails.id];
       return ListTile(
         title: Text(productDetails.title ?? 'Error'),
         subtitle: Text(productDetails.description ?? ''),
@@ -303,7 +295,7 @@ class _SubscriptionDialogState extends State<SubscriptionDialog> with WidgetsBin
               PurchaseParam purchaseParam = PurchaseParam(
                   productDetails: productDetails,
                   applicationUserName: id,
-                  sandboxTesting: true);
+                  sandboxTesting: false);
               if (productDetails.id == _kConsumableId) {
                 _connection.buyConsumable(
                     purchaseParam: purchaseParam,

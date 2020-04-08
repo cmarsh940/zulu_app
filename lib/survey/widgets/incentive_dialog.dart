@@ -27,7 +27,6 @@ class _IncentiveDialogState extends State<IncentiveDialog> with WidgetsBindingOb
 
   @override
   void initState() {
-    print('incentive: ${survey.incentive}');
     if (survey.incentive != null) {
       incentive.name = survey.incentive.name;
       incentive.date = survey.incentive.drawDate;
@@ -138,8 +137,6 @@ class _IncentiveDialogState extends State<IncentiveDialog> with WidgetsBindingOb
   }
  _submitForm() async {
     _fbKey.currentState.save();
-    print('incentive: $incentive');
-
     await _surveyRepository.updateIncentive(id: id, form: incentive);
     Navigator.pop(context);
   }

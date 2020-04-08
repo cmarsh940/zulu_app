@@ -49,6 +49,111 @@ class ClientRepository {
     }
   }
 
+  Future<ClientModel> appleAuthenticate({
+    @required String email,
+    @required String password,
+    @required String firstName,
+    @required String lastName,
+  }) async {
+    print('email $email');
+    print('password $password');
+    print('firstName $firstName');
+    print('lastName $lastName');
+    var response = await http.post(appleLoginURL, body: {'email': email, 'password': password, 'firstName': firstName, 'lastName': lastName});
+    if (response.statusCode == 200) {
+      Map clientMap = jsonDecode(response.body);
+      final ClientModel _client = new ClientModel.fromJson(clientMap);
+      // ClientModel _client = ClientModel.fromJson(json.decode(response.body));
+      if (_client.id == null) {
+        print('CLIENT ID IS NULL');
+        return null;
+      } else {
+        final _token = _client.token;
+        final _id = _client.id;
+        final _count = _client.surveyCount;
+        final _subscription = _client.subscription;
+
+        SharedPreferences.getInstance().then((prefs) {
+          prefs.setString("client_token", _token);
+          prefs.setString("client_id", _id);
+          prefs.setBool("is_login", true);
+          prefs.setInt("_count", _count);
+          prefs.setString("_subscription", _subscription);
+        });
+        return _client;
+      }
+    } else {
+      return null;
+    }
+  }
+  
+  Future<ClientModel> googleAuthenticate({
+    @required String email,
+    @required String password,
+    @required String firstName,
+    @required String lastName,
+  }) async {
+    var response = await http.post(googleLoginURL, body: {'email': email, 'password': password, 'firstName': firstName, 'lastName': lastName});
+    if (response.statusCode == 200) {
+      Map clientMap = jsonDecode(response.body);
+      final ClientModel _client = new ClientModel.fromJson(clientMap);
+      // ClientModel _client = ClientModel.fromJson(json.decode(response.body));
+      if (_client.id == null) {
+        print('CLIENT ID IS NULL');
+        return null;
+      } else {
+        final _token = _client.token;
+        final _id = _client.id;
+        final _count = _client.surveyCount;
+        final _subscription = _client.subscription;
+
+        SharedPreferences.getInstance().then((prefs) {
+          prefs.setString("client_token", _token);
+          prefs.setString("client_id", _id);
+          prefs.setBool("is_login", true);
+          prefs.setInt("_count", _count);
+          prefs.setString("_subscription", _subscription);
+        });
+        return _client;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  Future<ClientModel> facebookAuthenticate({
+    @required String email,
+    @required String password,
+    @required String firstName,
+    @required String lastName,
+  }) async {
+    var response = await http.post(facebookLoginURL, body: {'email': email, 'password': password, 'firstName': firstName, 'lastName': lastName});
+    if (response.statusCode == 200) {
+      Map clientMap = jsonDecode(response.body);
+      final ClientModel _client = new ClientModel.fromJson(clientMap);
+      if (_client.id == null) {
+        print('CLIENT ID IS NULL');
+        return null;
+      } else {
+        final _token = _client.token;
+        final _id = _client.id;
+        final _count = _client.surveyCount;
+        final _subscription = _client.subscription;
+
+        SharedPreferences.getInstance().then((prefs) {
+          prefs.setString("client_token", _token);
+          prefs.setString("client_id", _id);
+          prefs.setBool("is_login", true);
+          prefs.setInt("_count", _count);
+          prefs.setString("_subscription", _subscription);
+        });
+        return _client;
+      }
+    } else {
+      return null;
+    }
+  }
+
 
   Future<CategoryApi> getCategory() async {
     var url = getCategoriesURL;
@@ -108,18 +213,20 @@ class ClientRepository {
 
   Future<void> signOut() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    // pref.remove("client_token");
-    // pref.remove("is_login");
-    // pref.remove("_categories");
     pref.clear();
     return ;
   }
 
-  Future<void> signUp({String email, String password}) async {
-  // return await _firebaseAuth.createUserWithEmailAndPassword(
-  //   email: email,
-  //   password: password,
-  // );
+  Future signUp({String firstName, String lastName, email, String password}) async {
+    var response = await http.post(registerURL, body: {'firstName': firstName, 'lastName': lastName,'email': email, 'password': password});
+    if (response.statusCode == 200) {
+      print('response is: ${response.body}');
+    
+      authenticate(email: email, password: password);
+      return true;
+    } else {
+      return null;
+    }
   }
 
   Future updateClient(ClientModel client) async {
@@ -166,8 +273,6 @@ class ClientRepository {
         },
       );
       if (response.statusCode == 200) {
-        var data = response.body;
-        print('data returned is: $data');
         return true;
       } else {
         print('Error did not return 200');

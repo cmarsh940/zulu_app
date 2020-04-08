@@ -1,27 +1,34 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
- import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:project_z/auth/authentication.dart';
 import 'package:project_z/data/repositories.dart';
+import 'package:project_z/utils/jwt-payload-parse.dart';
 import 'package:project_z/utils/popUp.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:apple_sign_in/apple_sign_in.dart';
 
-
+import '../../constants.dart';
 import '../login.dart';
+import 'create_account_button.dart';
 import 'login_button.dart';
+
+const APP_ID = "<Put in your Device ID>";
 
 // FacebookLogin _facebookLogin = FacebookLogin();
 
  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
 class LoginForm extends StatefulWidget {
-  final ClientRepository _clientRepository;
+  final ClientRepository clientRepository;
 
   LoginForm({Key key, @required ClientRepository clientRepository})
       : assert(clientRepository != null),
-        _clientRepository = clientRepository,
+        clientRepository = clientRepository,
         super(key: key);
 
 
@@ -36,13 +43,31 @@ class _LoginFormState extends State<LoginForm> {
 
   LoginBloc _loginBloc;
 
-  ClientRepository get _clientRepository => widget._clientRepository;
+  ClientRepository get clientRepository => widget.clientRepository;
 
   bool get isPopulated =>
       _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
 
   bool isLoginButtonEnabled(LoginState state) {
     return state.isFormValid && isPopulated && !state.isSubmitting;
+  }
+
+  static final MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    testDevices: APP_ID != null ? [APP_ID] : null,
+    keywords: ['Business', 'Surveys', 'Polls', 'Small Business'],
+  );
+
+  BannerAd bannerAd;
+
+
+  BannerAd buildBanner() {
+    return BannerAd(
+        adUnitId: Platform.isIOS? iosAds : androidAds,
+        size: AdSize.smartBanner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print(event);
+        });
   }
 
   @override
@@ -52,10 +77,18 @@ class _LoginFormState extends State<LoginForm> {
     _loginBloc = BlocProvider.of<LoginBloc>(context);
     _emailController.addListener(_onEmailChanged);
     _passwordController.addListener(_onPasswordChanged);
+
+    FirebaseAdMob.instance.initialize(appId: Platform.isIOS ? iosId : androidId);
+    bannerAd = buildBanner()..load();
+
+    AppleSignIn.onCredentialRevoked.listen((_) {
+      print("Credentials revoked");
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    bannerAd..show();
     return BlocListener(
       bloc: _loginBloc,
       listener: (BuildContext context, LoginState state) {
@@ -88,7 +121,7 @@ class _LoginFormState extends State<LoginForm> {
             );
         }
         if (state.isSuccess) {
-          BlocProvider.of<AuthenticationBloc>(context).dispatch(LoggedIn());
+          BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
         }
       },
       child: BlocBuilder(
@@ -103,7 +136,7 @@ class _LoginFormState extends State<LoginForm> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Image.asset('assets/images/splashLogo.png', height: 300),
+                      child: Image.asset('assets/images/splashLogo.png', height: 200),
                     ),
                     TextFormField(
                       controller: _emailController,
@@ -143,9 +176,25 @@ class _LoginFormState extends State<LoginForm> {
                                 ? _onFormSubmitted
                                 : null,
                           ),
+                          (Platform.isIOS) ? 
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                AppleSignInButton(
+                                  onPressed: () {
+                                    _handleAppleSignIn();
+                                  },
+                                ),
+                              ]
+                            ) : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                              ]
+                            ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
+                              
                                IconButton(
                                  icon: Image.asset(
                                    'assets/icons/loginWithGoogle.png',
@@ -165,7 +214,8 @@ class _LoginFormState extends State<LoginForm> {
                                 },
                               )
                             ],
-                          )
+                          ),
+                          CreateAccountButton(clientRepository: clientRepository),
                         ],
                       ),
                     ),
@@ -181,30 +231,58 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   void dispose() {
+    bannerAd?.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   void _onEmailChanged() {
-    _loginBloc.dispatch(
+    _loginBloc.add(
       EmailChanged(email: _emailController.text),
     );
   }
 
   void _onPasswordChanged() {
-    _loginBloc.dispatch(
+    _loginBloc.add(
       PasswordChanged(password: _passwordController.text),
     );
   }
 
   void _onFormSubmitted() {
-    _loginBloc.dispatch(
+    _loginBloc.add(
       LoginButtonPressed(
         email: _emailController.text,
         password: _passwordController.text,
       ),
     );
+  }
+
+  Future<void> _handleAppleSignIn() async {
+    final AuthorizationResult result = await AppleSignIn.performRequests([
+      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+    ]);
+
+    if (result.status == AuthorizationStatus.authorized) {
+      var appleUser = parseJwt(utf8.decode(result.credential.identityToken));
+      var firstName = result.credential.fullName.givenName;
+      var lastName = result.credential.fullName.familyName;
+      var email = (result.credential.email == null) ? appleUser['email'] : result.credential.email;
+      var password = (result.credential.email == null) ? 'Apple' + appleUser['email'] : 'Apple' + result.credential.email;
+        
+      _loginBloc.add(
+        AppleLoginButtonPressed(
+          email: email,
+          password: password,
+          firstName: firstName,
+          lastName: lastName
+        ),
+      );
+    } else {
+      var title = 'Apple Signin Error';
+      var message = 'There was a problem signing with apple.';
+      showAlertPopup(context, title, message);
+    }
   }
 
    Future<void> _handleGoogleSignIn() async {
@@ -214,20 +292,24 @@ class _LoginFormState extends State<LoginForm> {
        });
        if (googleUser == null) {
          var title = 'Google Signin Error';
-         var message = 'There was a problem signing into goolgle.';
+         var message = 'There was a problem signing into google.';
          showAlertPopup(context, title, message);
        } else {
+         var name = _googleSignIn.currentUser.displayName.split(' ');
+         var firstName = name[0];
+         var lastName = name[1];
          var email = _googleSignIn.currentUser.email;
          var password = 'Google' + _googleSignIn.currentUser.id;
-         _loginBloc.dispatch(
-           LoginButtonPressed(
+         _loginBloc.add(
+           GoogleLoginButtonPressed(
              email: email,
              password: password,
+             firstName: firstName,
+             lastName: lastName
            ),
          );
        }
      } catch (error) {
-       print('google signin error');
        var title = 'Google Signin Error';
        var message = error;
        showAlertPopup(context, title, message);
@@ -237,6 +319,9 @@ class _LoginFormState extends State<LoginForm> {
   Future<void> _handleFacebookSignIn() async {
     String email;
     String id;
+    String firstName;
+    String lastName;
+
     final FacebookLoginResult result =
         await facebookSignIn.logIn(['email']);
 
@@ -254,12 +339,20 @@ class _LoginFormState extends State<LoginForm> {
           else if (a.key == 'id') {
             id = a.value.toString();
           }
+          else if (a.key == 'first_name') {
+            firstName = a.value.toString();
+          }
+          else if (a.key == 'last_name') {
+            lastName = a.value.toString();
+          }
         }
         var password = 'Facebook' + id;
-        _loginBloc.dispatch(
-          LoginButtonPressed(
+        _loginBloc.add(
+          FacebookLoginButtonPressed(
             email: email,
             password: password,
+            firstName: firstName,
+            lastName: lastName,
           ),
         );
         break;

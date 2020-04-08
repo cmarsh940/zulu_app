@@ -31,8 +31,6 @@ class _UserListState extends State<UserList> {
 
   @override
   initState() {
-    print(survey.name);
-    print(survey.users);
     setUsers();
     super.initState();
   }
@@ -81,15 +79,19 @@ class _UserListState extends State<UserList> {
 
   _removeUser(String id) async {
     List<Users> updatedUsers = await _surveyRepository.removeUser(id: id);
-    print('response is: $updatedUsers');
     setState(() {
       users = updatedUsers;
     });
   } 
 
   _updateUser(String id, TempUser user) async {
-    print('********** HIT UPDATE USER ************');
     List<Users> updatedUsers = await _surveyRepository.addUser(id: id, form: user);
+    setState(() {
+      users = updatedUsers;
+    });
+  }
+  _updateOldUser(String id, TempUser user) async {
+    List<Users> updatedUsers = await _surveyRepository.updateUser(id: id, form: user);
     setState(() {
       users = updatedUsers;
     });
@@ -160,12 +162,19 @@ class _UserListState extends State<UserList> {
           itemBuilder: (BuildContext context, int index) {
             Users u = users?.elementAt(index);
             return ListTile(
-              onTap: () {
-                print(u.name);
-                // Navigator.of(context).push(MaterialPageRoute(
-                //     builder: (BuildContext context) =>
-                //         ContactDetailsPage(c)));
-              },
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) {
+                  return AddUserDialog(
+                    surveyRepository: _surveyRepository, 
+                    id: survey.id, 
+                    isEditing: true, 
+                    tempUser: u, 
+                    onSave: (TempUser user) {
+                      _updateOldUser(u.sId, user);
+                    },
+                  );
+                }),
+              ),
               leading: Icon(Icons.person_outline),
               title: Text(u.name ?? ""),
               subtitle: (u.phone != '') ? Text(u.phone) : (u.email != '') ? Text(u.email) : '',
@@ -199,7 +208,7 @@ class _UserListState extends State<UserList> {
             onTap: () =>  
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) {
-                  return AddUserDialog(surveyRepository: _surveyRepository, id: survey.id, onSave: (TempUser user) {
+                  return AddUserDialog(surveyRepository: _surveyRepository, id: survey.id, isEditing: false, onSave: (TempUser user) {
                       _updateUser(survey.id, user);
                     },
                   );

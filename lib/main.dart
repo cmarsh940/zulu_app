@@ -32,7 +32,7 @@ void main() {
     BlocProvider<AuthenticationBloc>(
       builder: (context) {
         return AuthenticationBloc(clientRepository: clientRepository)
-          ..dispatch(AppStarted());
+          ..add(AppStarted());
       },
       child: App(clientRepository: clientRepository, surveyRepository: surveyRepository),
     ),

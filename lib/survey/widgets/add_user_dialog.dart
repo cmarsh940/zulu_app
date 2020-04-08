@@ -7,12 +7,14 @@ import 'package:project_z/models/survey.dart';
 typedef OnSaveCallback = Function(TempUser user);
 class AddUserDialog extends StatefulWidget {
   final String id;
-  final SurveyRepository _surveyRepository;
+  final SurveyRepository surveyRepository;
+  final bool isEditing;
+  final Users tempUser;
   final OnSaveCallback onSave;
 
-  const AddUserDialog({Key key, this.id, @required SurveyRepository surveyRepository, this.onSave,
+  const AddUserDialog({Key key, this.id, @required SurveyRepository surveyRepository, this.onSave, this.tempUser, this.isEditing,
   }) : assert(surveyRepository != null),
-        _surveyRepository = surveyRepository, super(key: key);
+        surveyRepository = surveyRepository, super(key: key);
 
   @override
   _AddUserDialogState createState() => _AddUserDialogState();
@@ -21,12 +23,18 @@ class AddUserDialog extends StatefulWidget {
 class _AddUserDialogState extends State<AddUserDialog> with WidgetsBindingObserver {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   String get id => widget.id;
-  SurveyRepository get _surveyRepository => widget._surveyRepository;
+  bool get isEditing => widget.isEditing;
+  Users get tempUser => widget.tempUser;
+  SurveyRepository get surveyRepository => widget.surveyRepository;
   TempUser user = new TempUser();
-  Users tempU = new Users();
   
     @override
     void initState() {
+      if (isEditing) {
+        user.name = tempUser.name ?? '';
+        user.email = tempUser.email ?? '';
+        user.phone = tempUser.phone ?? '';
+      }
       super.initState();
     }
   
@@ -103,7 +111,6 @@ class _AddUserDialogState extends State<AddUserDialog> with WidgetsBindingObserv
                           onPressed: () {
                             _fbKey.currentState.save();
                             if (_fbKey.currentState.validate()) {
-                              // _submitForm(survey, questions);
                               _submitForm();
                             } else {
                               print(_fbKey.currentState.value);
@@ -123,12 +130,7 @@ class _AddUserDialogState extends State<AddUserDialog> with WidgetsBindingObserv
     }
    _submitForm() async {
       _fbKey.currentState.save();
-      tempU.name = user.name;
-      tempU.email = user.email;
-      tempU.phone = user.phone;
       widget.onSave(user);
-      // var data = await _surveyRepository.addUser(id: id, form: user);
-      // print('add User: $data');
       Navigator.pop(context, true);
     }
   }

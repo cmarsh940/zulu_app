@@ -11,6 +11,7 @@
         android:label="Survey Zulu"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
+        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-8766159028719488~2145453783" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

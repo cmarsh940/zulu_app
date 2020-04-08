@@ -47,29 +47,41 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         email: event.email,
         password: event.password,
       );
+    } else if (event is AppleLoginButtonPressed) {
+      yield* _mapLoginWithAppleCredentialsPressedToState(
+        email: event.email,
+        password: event.password,
+        firstName: event.firstName,
+        lastName: event.lastName,
+      );
+    } else if (event is GoogleLoginButtonPressed) {
+      yield* _mapLoginWithGoogleCredentialsPressedToState(
+        email: event.email,
+        password: event.password,
+        firstName: event.firstName,
+        lastName: event.lastName,
+      );
+    } else if (event is FacebookLoginButtonPressed) {
+      yield* _mapLoginWithFacebookCredentialsPressedToState(
+        email: event.email,
+        password: event.password,
+        firstName: event.firstName,
+        lastName: event.lastName,
+      );
     }
   }
 
   Stream<LoginState> _mapEmailChangedToState(String email) async* {
-    yield currentState.update(
+    yield state.update(
       isEmailValid: Validators.isValidEmail(email),
     );
   }
 
   Stream<LoginState> _mapPasswordChangedToState(String password) async* {
-    yield currentState.update(
+    yield state.update(
       isPasswordValid: Validators.isValidPassword(password),
     );
   }
-
-  // Stream<LoginState> _mapLoginWithGooglePressedToState() async* {
-  //   try {
-  //     await _userRepository.signInWithGoogle();
-  //     yield LoginState.success();
-  //   } catch (_) {
-  //     yield LoginState.failure();
-  //   }
-  // }
 
   Stream<LoginState> _mapLoginWithCredentialsPressedToState({
     String email,
@@ -87,14 +99,74 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } else {
       yield LoginState.failure();
     }
-    // try {
-    //   await _clientRepository.authenticate(
-    //     email: email,
-    //     password: password,
-    //   );
-    //   yield LoginState.success();
-    // } catch (_) {
-    //   yield LoginState.failure();
-    // }
+  }
+
+  Stream<LoginState> _mapLoginWithAppleCredentialsPressedToState({
+    String email,
+    String password,
+    String firstName,
+    String lastName,
+  }) async* {
+    yield LoginState.loading();
+    
+    var response =  await _clientRepository.appleAuthenticate(
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+    );
+
+    if (response != null) {
+      yield LoginState.success();
+    } else {
+      yield LoginState.failure();
+    }
+
+  }
+
+  Stream<LoginState> _mapLoginWithGoogleCredentialsPressedToState({
+    String email,
+    String password,
+    String firstName,
+    String lastName,
+  }) async* {
+    yield LoginState.loading();
+    
+    var response =  await _clientRepository.googleAuthenticate(
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+    );
+
+    if (response != null) {
+      yield LoginState.success();
+    } else {
+      yield LoginState.failure();
+    }
+
+  }
+
+  Stream<LoginState> _mapLoginWithFacebookCredentialsPressedToState({
+    String email,
+    String password,
+    String firstName,
+    String lastName,
+  }) async* {
+    yield LoginState.loading();
+    
+    var response =  await _clientRepository.facebookAuthenticate(
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+    );
+
+    if (response != null) {
+      yield LoginState.success();
+    } else {
+      yield LoginState.failure();
+    }
+
   }
 }

@@ -23,11 +23,11 @@ class SurveyDetailBloc extends Bloc<SurveyDetailEvent, SurveyDetailState> {
     if (event is RetrieveSurveyById) {
       yield SurveyByIdLoading();
       await Future.delayed(Duration(seconds: 2));
-      yield* _mapRetrieveSurveyToState(currentState, event);
+      yield* _mapRetrieveSurveyToState(event);
     } else if (event is AddSurvey) {
-      yield* _mapUpdateSurveyToState(currentState, event);
+      yield* _mapUpdateSurveyToState(event);
     } else if (event is UpdateNewSurvey) {
-      yield* _mapUpdateSurveyToState(currentState, event);
+      yield* _mapUpdateSurveyToState(event);
     } 
     // else if (event is DeleteSurvey) {
     //   yield* _mapDeleteSurveyToState(currentState, event);
@@ -36,7 +36,6 @@ class SurveyDetailBloc extends Bloc<SurveyDetailEvent, SurveyDetailState> {
   
 
   Stream<SurveyDetailState> _mapRetrieveSurveyToState(
-    SurveyDetailState currentState,
     RetrieveSurveyById event,
   ) async* {
       try {
@@ -51,7 +50,6 @@ class SurveyDetailBloc extends Bloc<SurveyDetailEvent, SurveyDetailState> {
 
 
   Stream<SurveyDetailState> _mapUpdateSurveyToState(
-    SurveyDetailState currentState,
     UpdateNewSurvey event,
   ) async* {
     Survey survey = await _surveyRepository.updateSurvey(event.updatedSurvey);

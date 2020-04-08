@@ -10,12 +10,12 @@ typedef OnSaveCallback = Function(TempUser user);
 
 class AddPhoneContact extends StatefulWidget {
   final String id;
-  final SurveyRepository _surveyRepository;
+  final SurveyRepository surveyRepository;
   final OnSaveCallback onSave;
 
   const AddPhoneContact({Key key, this.id, @required SurveyRepository surveyRepository, this.onSave,
   }) : assert(surveyRepository != null),
-        _surveyRepository = surveyRepository, super(key: key);
+        surveyRepository = surveyRepository, super(key: key);
 
   @override
   _AddPhoneContactState createState() => _AddPhoneContactState();
@@ -24,7 +24,7 @@ class AddPhoneContact extends StatefulWidget {
 class _AddPhoneContactState extends State<AddPhoneContact> {
   Iterable<Contact> _contacts;
   String get id => widget.id;
-  SurveyRepository get _surveyRepository => widget._surveyRepository;
+  SurveyRepository get surveyRepository => widget.surveyRepository;
   TempUser user = new TempUser();
 
   @override
@@ -98,10 +98,6 @@ class _AddPhoneContactState extends State<AddPhoneContact> {
   }
 
   _submitContact(Contact contact) async {
-    print(contact.displayName);
-    print(contact.givenName);
-    print(contact.familyName);
-
     var email = contact.emails.toList();
     var newEmail = (email.isNotEmpty) ? email.elementAt(0).value : '';
     var phone = contact.phones.toList();
@@ -111,8 +107,6 @@ class _AddPhoneContactState extends State<AddPhoneContact> {
     var temp3Phone = temp2Phone.replaceAll(")", "");
     var user = new TempUser(name: contact.displayName, email: newEmail, phone: temp3Phone);
     widget.onSave(user);
-    // var data = await _surveyRepository.addUser(id: id, form: user);
-    // print('add User: $data');
     Navigator.pop(context, true);
   }
 }

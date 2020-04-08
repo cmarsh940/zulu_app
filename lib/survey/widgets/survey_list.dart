@@ -39,21 +39,20 @@ class _SurveyListState extends State<SurveyList> {
   void initState() {
     getSub();
     rebuilt = 0;
-    _surveyBloc = SurveyBloc(surveyRepository: _surveyRepository)..dispatch(LoadSurvey());
+    _surveyBloc = SurveyBloc(surveyRepository: _surveyRepository)..add(LoadSurvey());
     super.initState();
     _refreshCompleter = Completer<void>();
   }
 
   @override
   void dispose() { 
-    _surveyBloc.dispose();
+    _surveyBloc.close();
     super.dispose();
   }
 
   getSub() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     sub = pref.getString("_subscription");
-    print('in sub: $sub');
   }
 
   _launchTermsURL() async {
@@ -76,7 +75,6 @@ class _SurveyListState extends State<SurveyList> {
 
   Future getImage(String id) async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    print(image);
     var name = 'picture';
 
     if (image == null) {
@@ -176,7 +174,7 @@ Future _settingsDialog(BuildContext context) async {
                       ),
                     ),
                     onPressed: () {
-                      BlocProvider.of<AuthenticationBloc>(context).dispatch(
+                      BlocProvider.of<AuthenticationBloc>(context).add(
                         Profile(),
                       );
                       Navigator.pop(context);
@@ -227,7 +225,7 @@ Future _settingsDialog(BuildContext context) async {
                       ),
                     ),
                     onPressed: () {
-                      BlocProvider.of<AuthenticationBloc>(context).dispatch(
+                      BlocProvider.of<AuthenticationBloc>(context).add(
                         LoggedOut(),
                       );
                       Navigator.pop(context);
@@ -368,20 +366,23 @@ Future _settingsDialog(BuildContext context) async {
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: () {
-                        _surveyBloc.dispatch(
+                        _surveyBloc.add(
                           Refresh(),
                         );
                         setState(() {
                           rebuilt += 1;
                         });
-                        print('rebuilt $rebuilt times');
                         Completer<Null> completer = new Completer<Null>();
                         new Future.delayed(new Duration(seconds: 2)).then((_){
                           completer.complete();
                         });
                         return completer.future;
                       },
-                      child: ListView.separated(
+                      child: (survey.length < 1) ? Text(
+                            'No Surveys',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                        ) : ListView.separated(
                         itemCount: survey.length,
                         itemBuilder: (context, i) {
                           Survey surveys = survey[i];
@@ -433,11 +434,11 @@ Future _settingsDialog(BuildContext context) async {
   }
 
   void _closeSurvey(String id) {
-    _surveyBloc.dispatch(CloseSurvey(id));
+    _surveyBloc.add(CloseSurvey(id));
   }
 
   void _openSurvey(String id) {
-    _surveyBloc.dispatch(OpenSurvey(id));
+    _surveyBloc.add(OpenSurvey(id));
   }
   
 }
