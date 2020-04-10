@@ -176,49 +176,55 @@ class _LoginFormState extends State<LoginForm> {
                                 ? _onFormSubmitted
                                 : null,
                           ),
-                          (Platform.isIOS) ? 
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                AppleSignInButton(
-                                  onPressed: () {
-                                    _handleAppleSignIn();
-                                  },
-                                ),
-                              ]
-                            ) : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                              ]
-                            ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              
-                               IconButton(
-                                 icon: Image.asset(
-                                   'assets/icons/loginWithGoogle.png',
-                                 ),
-                                 iconSize: 60,
-                                 onPressed: () {
-                                   _handleGoogleSignIn();
-                                 },
-                               ),
-                              IconButton(
-                                icon: Image.asset(
-                                  'assets/icons/loginWithFacebook.png',
-                                ),
-                                iconSize: 60,
-                                onPressed: () {
-                                 _handleFacebookSignIn();
-                                },
-                              )
-                            ],
-                          ),
-                          CreateAccountButton(clientRepository: clientRepository),
-                        ],
+                        ]
                       ),
                     ),
+                    (Platform.isIOS) ? 
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: AppleSignInButton(
+                              type: ButtonType.signIn,
+                              style: ButtonStyle.whiteOutline,
+                              onPressed: () {
+                                _handleAppleSignIn();
+                              },
+                            ),
+                          ),
+                        ]
+                      ) : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                        ]
+                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        
+                          IconButton(
+                            icon: Image.asset(
+                              'assets/icons/loginWithGoogle.png',
+                            ),
+                            iconSize: 60,
+                            onPressed: () {
+                              _handleGoogleSignIn();
+                            },
+                          ),
+                        IconButton(
+                          icon: Image.asset(
+                            'assets/icons/loginWithFacebook.png',
+                          ),
+                          iconSize: 60,
+                          onPressed: () {
+                            _handleFacebookSignIn();
+                          },
+                        )
+                      ],
+                    ),
+                    CreateAccountButton(clientRepository: clientRepository),
                   ],
                 ),
               ),
