@@ -10,15 +10,12 @@ import 'package:project_z/auth/authentication.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/utils/jwt-payload-parse.dart';
 import 'package:project_z/utils/popUp.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
 
-import '../../constants.dart';
 import '../login.dart';
 import 'create_account_button.dart';
 import 'login_button.dart';
 
-const APP_ID = "<Put in your Device ID>";
 
 // FacebookLogin _facebookLogin = FacebookLogin();
 
@@ -52,23 +49,7 @@ class _LoginFormState extends State<LoginForm> {
     return state.isFormValid && isPopulated && !state.isSubmitting;
   }
 
-  static final MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
-    testDevices: APP_ID != null ? [APP_ID] : null,
-    keywords: ['Business', 'Surveys', 'Polls', 'Small Business'],
-  );
-
-  BannerAd bannerAd;
-
-
-  BannerAd buildBanner() {
-    return BannerAd(
-        adUnitId: Platform.isIOS? iosAds : androidAds,
-        size: AdSize.smartBanner,
-        targetingInfo: targetingInfo,
-        listener: (MobileAdEvent event) {
-          print(event);
-        });
-  }
+  
 
   @override
   void initState() {
@@ -78,9 +59,6 @@ class _LoginFormState extends State<LoginForm> {
     _emailController.addListener(_onEmailChanged);
     _passwordController.addListener(_onPasswordChanged);
 
-    FirebaseAdMob.instance.initialize(appId: Platform.isIOS ? iosId : androidId);
-    bannerAd = buildBanner()..load();
-
     AppleSignIn.onCredentialRevoked.listen((_) {
       print("Credentials revoked");
     });
@@ -88,7 +66,6 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    bannerAd..show();
     return BlocListener(
       bloc: _loginBloc,
       listener: (BuildContext context, LoginState state) {
@@ -237,7 +214,6 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   void dispose() {
-    bannerAd?.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();

@@ -5,8 +5,8 @@ enum AlertAction {
   agree,
 }
 
-const host = 'https://surveyzulu.com/';
-// const host = 'http://127.0.0.1:8000/';
+// const host = 'https://surveyzulu.com/';
+const host = 'http://127.0.0.1:8000/';
 
 const String loginURL = host + "api/clients/applogin";
 const String appleLoginURL = host + "api/clients/appapplelogin";
@@ -34,9 +34,9 @@ const String uploadQuestionPictureURL = host + "api/appupload/picture/";
 
 // Admods Ids
 const String androidAds = 'ca-app-pub-8766159028719488/3266963766';
-const String iosAds = 'ca-app-pub-8766159028719488/6887989474';
 const String androidId = 'ca-app-pub-8766159028719488~2145453783';
 const String iosId = 'ca-app-pub-8766159028719488~8922770650';
+const String iosAds = 'ca-app-pub-8766159028719488/5904732792';
 
 const bool devMode = false;
 const double textScaleFactor = 1.0;

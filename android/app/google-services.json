@@ -1,0 +1,57 @@
+{
+  "project_info": {
+    "project_number": "155908505256",
+    "firebase_url": "https://survey-zulu.firebaseio.com",
+    "project_id": "survey-zulu",
+    "storage_bucket": "survey-zulu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155908505256:android:fd0f6a841351047d",
+        "android_client_info": {
+          "package_name": "com.survey.zulu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "155908505256-m5aeuuknsi2un4bll0nq6hpocegoudvv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.survey.zulu",
+            "certificate_hash": "04de236b49c70db1559e1fd868826c89cab3637b"
+          }
+        },
+        {
+          "client_id": "155908505256-paerasa3g8jp716fduji80sd2e2bqe68.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIncRl9qLoxnftFTaO3ESXnnIc9hkf6A8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "155908505256-paerasa3g8jp716fduji80sd2e2bqe68.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "155908505256-krssfv9n9bn18gas04i4j9gh4rr1k1mm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.marshalltechnology.zulu",
+                "app_store_id": "1465296291"
+              }
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-8766159028719488~2145453783"
+    }
+  ],
+  "configuration_version": "1"
+}

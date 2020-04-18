@@ -6,6 +6,8 @@
 	<string>155908505256-krssfv9n9bn18gas04i4j9gh4rr1k1mm.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.155908505256-krssfv9n9bn18gas04i4j9gh4rr1k1mm</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>155908505256-m5aeuuknsi2un4bll0nq6hpocegoudvv.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAMROvb9U7jLQfpalsI8ycL2t_OTG4Cji8</string>
 	<key>GCM_SENDER_ID</key>
@@ -32,5 +34,7 @@
 	<string>1:155908505256:ios:70e076dc5fc15ccc</string>
 	<key>DATABASE_URL</key>
 	<string>https://survey-zulu.firebaseio.com</string>
+	<key>ADMOB_APP_ID</key>
+	<string>ca-app-pub-8766159028719488~8922770650</string>
 </dict>
 </plist>

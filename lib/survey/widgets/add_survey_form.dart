@@ -1,15 +1,19 @@
+import 'dart:io';
+
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:project_z/constants.dart';
 import 'package:project_z/data/repositories.dart';
 import 'package:project_z/models/survey.dart';
 
 import '../survey.dart';
 
 
-
+const APP_ID = null;
 
 // typedef OnSaveCallback = Function(Survey survey);
 
@@ -73,6 +77,25 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
   String _subscription;
   Incentive incentive;
 
+static final MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    testDevices: APP_ID != null ? [APP_ID] : null,
+    keywords: ['Business', 'Surveys', 'Polls', 'Small Business'],
+  );
+
+  BannerAd bannerAd;
+
+
+  BannerAd buildBanner() {
+    return BannerAd(
+        adUnitId: BannerAd.testAdUnitId,
+        // adUnitId: Platform.isIOS? iosAds : androidAds,
+        size: AdSize.banner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print(event);
+        });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -87,10 +110,15 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
     first.options = [];
     first.options.add(new NewOptions());
     questions.add(first);
+
+    FirebaseAdMob.instance.initialize(appId: FirebaseAdMob.testAppId);
+    // FirebaseAdMob.instance.initialize(appId: Platform.isIOS ? iosId : androidId);
+    bannerAd = buildBanner()..load();
   }
 
   @override
   void dispose() { 
+    bannerAd?.dispose();
     _addUpdateBloc.close();
     super.dispose();
   }
@@ -128,6 +156,7 @@ class _AddSurveyFormState extends State<AddSurveyForm> {
     
   @override
   Widget build(BuildContext context) {
+    bannerAd..show(anchorType: AnchorType.top);
     return BlocListener(
       bloc: _addUpdateBloc,
       listener: (BuildContext context, AddUpdateState state) {
