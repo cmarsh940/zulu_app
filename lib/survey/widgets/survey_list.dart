@@ -11,6 +11,7 @@ import 'package:project_z/models/survey.dart';
 import 'package:project_z/survey/users_page.dart';
 import 'package:project_z/survey/widgets/incentive_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_share_plugin/social_share_plugin.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../survey.dart';
@@ -100,6 +101,81 @@ Future<String> _asyncSimpleDialog(BuildContext context, String id, bool active, 
           children: <Widget>[
             Column(
               children: <Widget>[
+                SimpleDialogOption(
+                  child: Text('Share by email'),
+                  onPressed: () async {
+                    final Uri params = Uri(
+                      scheme: 'mailto',
+                      path: '',
+                      query: 'subject=Take%20our%20Survey&body=Please%20participate%20in%20our%20survey.%0ahttps://surveyzulu.com/takeSurvey/$id',
+                    );
+
+                    var url = params.toString();
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      print('Could not launch $url');
+                    }
+                  },
+                ),
+                SimpleDialogOption(
+                  child: Text('Share by text'),
+                  onPressed: () async {
+                    if(Platform.isAndroid){
+                        //FOR Android
+                        String url ='sms:?body=Please%20participate%20in%20our%20survey.%0ahttps://surveyzulu.com/takeSurvey/$id';
+                        await launch(url);
+                    } 
+                    else if(Platform.isIOS){
+                        //FOR IOS
+                        String url ='sms:&body=Please%20participate%20in%20our%20survey.%0ahttps://surveyzulu.com/takeSurvey/$id';
+                        await launch(url);
+                    }
+                  },
+                ),
+                SimpleDialogOption(
+                  child: Text('Share to Facebook'),
+                  onPressed: () async {
+                    String url = 'https://surveyzulu.com/takeSurvey/$id';
+                    final result = await SocialSharePlugin.shareToFeedFacebookLink(
+                      url: url,
+                      onSuccess: (_) {
+                        print('FACEBOOK SUCCESS');
+                        return;
+                      },
+                      onCancel: () {
+                        print('FACEBOOK CANCELLED');
+                        return;
+                      },
+                      onError: (error) {
+                        print('FACEBOOK ERROR $error');
+                        return;
+                      },
+                    );
+
+                    print(result);
+                  },
+                ),
+                SimpleDialogOption(
+                  child: Text('Share to Twitter'),
+                  onPressed: () async {
+                    String url = 'https://surveyzulu.com/takeSurvey/$id';
+                    final text =
+                        'Please participate in our survey';
+                    final result = await SocialSharePlugin.shareToTwitterLink(
+                        text: text,
+                        url: url,
+                        onSuccess: (_) {
+                          print('TWITTER SUCCESS');
+                          return;
+                        },
+                        onCancel: () {
+                          print('TWITTER CANCELLED');
+                          return;
+                        });
+                    print(result);
+                  },
+                ),
                 (sub.toLowerCase() != 'free' || sub.toLowerCase() != 'trial') ? SimpleDialogOption(
                   onPressed: () {
                     getImage(id);
