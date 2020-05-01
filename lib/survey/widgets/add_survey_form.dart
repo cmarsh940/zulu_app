@@ -87,8 +87,7 @@ static final MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
 
   BannerAd buildBanner() {
     return BannerAd(
-        adUnitId: BannerAd.testAdUnitId,
-        // adUnitId: Platform.isIOS? iosAds : androidAds,
+        adUnitId: Platform.isIOS? iosAds : androidAds,
         size: AdSize.banner,
         targetingInfo: targetingInfo,
         listener: (MobileAdEvent event) {
@@ -111,8 +110,7 @@ static final MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
     first.options.add(new NewOptions());
     questions.add(first);
 
-    FirebaseAdMob.instance.initialize(appId: FirebaseAdMob.testAppId);
-    // FirebaseAdMob.instance.initialize(appId: Platform.isIOS ? iosId : androidId);
+    FirebaseAdMob.instance.initialize(appId: Platform.isIOS ? iosId : androidId);
     bannerAd = buildBanner()..load();
   }
 
